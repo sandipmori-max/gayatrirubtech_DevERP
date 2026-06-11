@@ -1,8 +1,8 @@
-package com.deverp
+package com.gayatrirubtech
 
 import android.app.Application
-import com.deverp.location.LocationPackage
-import com.deverp.docscanner.DocumentScannerPackage
+import com.gayatrirubtech.location.LocationPackage
+import com.gayatrirubtech.docscanner.DocumentScannerPackage
 
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
