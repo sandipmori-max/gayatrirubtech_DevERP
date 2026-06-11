@@ -239,7 +239,7 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
             >
               <Image
                 source={user?.companyLogo || ERP_ICON.APP_LOGO}
-                style={{ height: 90, width: 90 }}
+                style={{ height: 200, width: 220 }}
                 resizeMode="contain"
               />
             </Animated.View>
