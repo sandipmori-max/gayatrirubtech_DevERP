@@ -1,4 +1,4 @@
-package com.deverp.docscanner;;
+package com.gayatrirubtech.docscanner;;
 
  
 import com.facebook.react.ReactPackage;

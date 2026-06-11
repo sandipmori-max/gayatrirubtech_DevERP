@@ -1,4 +1,4 @@
-package com.deverp.location
+package com.gayatrirubtech.location
 
 import android.app.Notification
 import android.app.NotificationChannel

@@ -1,4 +1,4 @@
-package com.deverp.orientation
+package com.gayatrirubtech.orientation
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

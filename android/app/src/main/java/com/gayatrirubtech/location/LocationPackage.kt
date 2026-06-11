@@ -1,4 +1,4 @@
-package com.deverp.location
+package com.gayatrirubtech.location
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

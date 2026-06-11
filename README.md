@@ -5008,7 +5008,7 @@ FILE: android/app/google-services.json
       "client_info": {
         "mobilesdk_app_id": "1:944238529141:android:12a6f618e39c784910463c",
         "android_client_info": {
-          "package_name": "com.deverp"
+          "package_name": "com.gayatrirubtech"
         }
       },
       "oauth_client": [],
@@ -5136,7 +5136,7 @@ FILE: android/app/src/main/AndroidManifest.xml
 ================================================
 FILE: android/app/src/main/java/com/deverp/MainActivity.kt
 ================================================
-package com.deverp
+package com.gayatrirubtech
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -5154,8 +5154,8 @@ class MainActivity : ReactActivity() {
 ================================================
 FILE: android/app/src/main/java/com/deverp/MainApplication.kt
 ================================================
-package com.deverp
-import com.deverp.location.LocationPackage 
+package com.gayatrirubtech
+import com.gayatrirubtech.location.LocationPackage 
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -5165,7 +5165,7 @@ import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.deverp.battery.BatteryOptimizationPackage;
+import com.gayatrirubtech.battery.BatteryOptimizationPackage;
 
 class MainApplication : Application(), ReactApplication {
 
@@ -5197,7 +5197,7 @@ class MainApplication : Application(), ReactApplication {
 ================================================
 FILE: android/app/src/main/java/com/deverp/battery/BatteryOptimizationModule.kt
 ================================================
-package com.deverp.battery
+package com.gayatrirubtech.battery
 
 import android.content.Context
 import android.content.Intent
@@ -5255,7 +5255,7 @@ fun requestIgnoreBatteryOptimizations(promise: Promise) {
 ================================================
 FILE: android/app/src/main/java/com/deverp/battery/BatteryOptimizationPackage.kt
 ================================================
-package com.deverp.battery
+package com.gayatrirubtech.battery
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -5277,7 +5277,7 @@ class BatteryOptimizationPackage : ReactPackage {
 ================================================
 FILE: android/app/src/main/java/com/deverp/location/BootReceiver.kt
 ================================================
-package com.deverp.location
+package com.gayatrirubtech.location
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -5299,7 +5299,7 @@ class BootReceiver : BroadcastReceiver() {
 ================================================
 FILE: android/app/src/main/java/com/deverp/location/LocationModule.kt
 ================================================
-package com.deverp.location
+package com.gayatrirubtech.location
 
 import android.content.Intent
 import androidx.core.content.ContextCompat
@@ -5307,9 +5307,9 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import android.util.Log
-import com.deverp.location.LocationService
+import com.gayatrirubtech.location.LocationService
 import com.facebook.react.bridge.ReadableArray
-import com.deverp.location.UserData
+import com.gayatrirubtech.location.UserData
 
 
 class LocationModule(private val reactContext: ReactApplicationContext) :
@@ -5366,7 +5366,7 @@ class LocationModule(private val reactContext: ReactApplicationContext) :
 ================================================
 FILE: android/app/src/main/java/com/deverp/location/LocationPackage.kt
 ================================================
-package com.deverp.location
+package com.gayatrirubtech.location
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -5388,7 +5388,7 @@ class LocationPackage : ReactPackage {
 ================================================
 FILE: android/app/src/main/java/com/deverp/location/LocationService.kt
 ================================================
-package com.deverp.location
+package com.gayatrirubtech.location
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -5408,7 +5408,7 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import java.net.HttpURLConnection
 import java.net.URL
-import com.deverp.location.UserData
+import com.gayatrirubtech.location.UserData
 
 // --- Model class for token + link ---
  
@@ -5622,7 +5622,7 @@ class LocationService : Service() {
 ================================================
 FILE: android/app/src/main/java/com/deverp/location/UserData.kt
 ================================================
-package com.deverp.location
+package com.gayatrirubtech.location
 
 data class UserData(
     val token: String,

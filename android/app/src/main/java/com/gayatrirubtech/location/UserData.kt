@@ -1,4 +1,4 @@
-package com.deverp.location
+package com.gayatrirubtech.location
 
 data class UserData(
     val token: String,
