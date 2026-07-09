@@ -516,12 +516,13 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                   behavior={Platform.OS === "ios" ? "padding" : "height"}
                 >
                   <ScrollView
+                    bounces={false}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                   >
                     <Formik
                       initialValues={{
-                        company_code: user?.company_code?.toLowerCase()?.includes("oeuvre01") ? 'oeuvre01' : "",
+                        company_code: "GAYATRIRUBTECH",
                         user: "",
                         password: "",
                       }}
@@ -536,138 +537,11 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                         errors,
                         touched,
                       }) => {
-                        useEffect(() => {
-                          if (touched?.company_code && errors?.company_code) {
-                            ccErrorAnim.setValue(0);
-                            Animated.timing(ccErrorAnim, {
-                              toValue: 1,
-                              duration: 280,
-                              easing: Easing.out(Easing.ease),
-                              useNativeDriver: true,
-                            }).start();
-                          }
-                        }, [touched?.company_code, errors?.company_code]);
-
-                        useEffect(() => {
-                          if (touched?.user && errors?.user) {
-                            userErrorAnim.setValue(0);
-                            Animated.timing(userErrorAnim, {
-                              toValue: 1,
-                              duration: 280,
-                              easing: Easing.out(Easing.ease),
-                              useNativeDriver: true,
-                            }).start();
-                          }
-                        }, [touched?.user, errors?.user]);
-
-                        useEffect(() => {
-                          if (touched?.password && errors?.password) {
-                            passErrorAnim.setValue(0);
-                            Animated.timing(passErrorAnim, {
-                              toValue: 1,
-                              duration: 280,
-                              easing: Easing.out(Easing.ease),
-                              useNativeDriver: true,
-                            }).start();
-                          }
-                        }, [touched?.password, errors?.password]);
 
                         return (
                           <>
                             {/* Company Code Input */}
-                            {
-                              !user?.company_code?.toLowerCase()?.includes("oeuvre01") && <View style={styles.inputContainer}>
-                              <Text
-                                style={[
-                                  styles.inputLabel,
-                                  theme === "dark" && { color: "white" },
-                                ]}
-                              >
-                                {t("account.companyCode")}
-                              </Text>
-                              <View
-                                style={[
-                                  styles.inputContainer,
-                                  {
-                                    justifyContent: "center",
-                                    alignContent: "center",
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    borderRadius: 8,
-                                    borderWidth: 1,
-                                    borderColor: ERP_COLOR_CODE.ERP_BORDER_LINE,
-                                    paddingLeft: 12,
-                                  },
-                                  touched?.company_code &&
-                                  errors?.company_code && {
-                                    borderColor: ERP_COLOR_CODE.ERP_ERROR,
-                                    borderWidth: 0.8,
-                                  },
-                                  isInputEditCC && {
-                                    borderColor: "#81b5e4",
-                                    borderWidth: 0.8,
-                                  },
-                                  values?.company_code && {
-                                    borderColor: "green",
-                                    borderWidth: 0.8,
-                                  },
-                                  theme === "dark" && {
-                                    backgroundColor: "black",
-                                  },
-                                ]}
-                              >
-                                <MaterialIcons
-                                  name="closed-caption-off"
-                                  size={20}
-                                  color={ERP_COLOR_CODE.ERP_999}
-                                />
-                                <TextInput
-                                  style={[
-                                    styles.input,
-                                    theme === "dark" && {
-                                      backgroundColor: "black",
-                                      color: "white",
-                                    },
-                                  ]}
-                                  placeholder={t("auth.enterCompanyCode")}
-                                  placeholderTextColor={ERP_COLOR_CODE.ERP_999}
-                                  autoCapitalize="none"
-                                  onChangeText={handleChange("company_code")}
-                                  value={values?.company_code}
-                                  onFocus={() => setIsInputEditCC(true)}
-                                  onBlur={() => {
-                                    if (!values?.company_code) {
-                                      handleBlur("company_code");
-                                      setIsInputEditCC(false);
-                                    }
-                                  }}
-                                />
-                              </View>
-                              {touched?.company_code &&
-                                errors?.company_code && (
-                                  <Animated.Text
-                                    style={[
-                                      styles.errorText,
-                                      {
-                                        opacity: ccErrorAnim,
-                                        transform: [
-                                          {
-                                            translateX: ccErrorAnim.interpolate(
-                                              {
-                                                inputRange: [0, 1],
-                                                outputRange: [-38, 0], // slide from LEFT
-                                              },
-                                            ),
-                                          },
-                                        ],
-                                      },
-                                    ]}
-                                  >
-                                    {errors?.company_code}
-                                  </Animated.Text>
-                                )}
-                            </View>
-                            }
+                           
                             
 
                             {/* User Input */}
@@ -929,6 +803,7 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
             >
               <>
                 <ScrollView
+                  bounces={false}
                   keyboardShouldPersistTaps="handled"
                   showsVerticalScrollIndicator={false}
                 >
@@ -946,6 +821,8 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                     ]}
                   >
                     <FlatList
+                                      bounces={false}
+
                       showsHorizontalScrollIndicator={false}
                       showsVerticalScrollIndicator={false}
                       keyExtractor={(item, index) => index.toString()}
@@ -1005,7 +882,7 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
 
                           <Formik
                             initialValues={{
-                              company_code: user?.company_code?.toLowerCase()?.includes("oeuvre01") ? 'oeuvre01' : "",
+                              company_code: 'GAYATRIRUBTECH' ,
                               user: "",
                               password: "",
                             }}
@@ -1022,157 +899,12 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                               errors,
                               touched,
                             }) => {
-                              useEffect(() => {
-                                if (
-                                  touched?.company_code &&
-                                  errors?.company_code
-                                ) {
-                                  ccErrorAnim.setValue(0);
-                                  Animated.timing(ccErrorAnim, {
-                                    toValue: 1,
-                                    duration: 280,
-                                    easing: Easing.out(Easing.ease),
-                                    useNativeDriver: true,
-                                  }).start();
-                                }
-                              }, [
-                                touched?.company_code,
-                                errors?.company_code,
-                              ]);
-
-                              useEffect(() => {
-                                if (touched?.user && errors?.user) {
-                                  userErrorAnim.setValue(0);
-                                  Animated.timing(userErrorAnim, {
-                                    toValue: 1,
-                                    duration: 280,
-                                    easing: Easing.out(Easing.ease),
-                                    useNativeDriver: true,
-                                  }).start();
-                                }
-                              }, [touched?.user, errors?.user]);
-
-                              useEffect(() => {
-                                if (touched?.password && errors?.password) {
-                                  passErrorAnim.setValue(0);
-                                  Animated.timing(passErrorAnim, {
-                                    toValue: 1,
-                                    duration: 280,
-                                    easing: Easing.out(Easing.ease),
-                                    useNativeDriver: true,
-                                  }).start();
-                                }
-                              }, [touched?.password, errors?.password]);
+                              
 
                               return (
                                 <>
                                   {/* Company Code Input */}
-                                  {
-                                    !user?.company_code?.toLowerCase()?.includes("oeuvre01") &&  <View style={styles.inputContainer}>
-                                    <Text
-                                      style={[
-                                        styles.inputLabel,
-                                        theme === "dark" && {
-                                          color: "white",
-                                        },
-                                      ]}
-                                    >
-                                      {t("account.companyCode")}
-                                    </Text>
-                                    <View
-                                      style={[
-                                        styles.inputContainer,
-                                        {
-                                          justifyContent: "center",
-                                          alignContent: "center",
-                                          flexDirection: "row",
-                                          alignItems: "center",
-                                          borderRadius: 8,
-                                          borderWidth: 1,
-                                          borderColor:
-                                            ERP_COLOR_CODE.ERP_BORDER_LINE,
-                                          paddingLeft: 12,
-                                        },
-                                        touched?.company_code &&
-                                        errors?.company_code && {
-                                          borderColor:
-                                            ERP_COLOR_CODE.ERP_ERROR,
-                                          borderWidth: 0.8,
-                                        },
-                                        isInputEditCC && {
-                                          borderColor: "#81b5e4",
-                                          borderWidth: 0.8,
-                                        },
-                                        values?.company_code && {
-                                          borderColor: "green",
-                                          borderWidth: 0.8,
-                                        },
-                                        theme === "dark" && {
-                                          backgroundColor: "black",
-                                        },
-                                      ]}
-                                    >
-                                      <MaterialIcons
-                                        name="closed-caption-off"
-                                        size={20}
-                                        color={ERP_COLOR_CODE.ERP_999}
-                                      />
-                                      <TextInput
-                                        style={[
-                                          styles.input,
-                                          theme === "dark" && {
-                                            backgroundColor: "black",
-                                            color: "white",
-                                          },
-                                          isIpad && {
-                                            paddingVertical: 16,
-                                          }
-                                        ]}
-                                        placeholder={t(
-                                          "auth.enterCompanyCode",
-                                        )}
-                                        placeholderTextColor={
-                                          ERP_COLOR_CODE.ERP_999
-                                        }
-                                        autoCapitalize="none"
-                                        onChangeText={handleChange(
-                                          "company_code",
-                                        )}
-                                        value={values?.company_code}
-                                        onFocus={() => setIsInputEditCC(true)}
-                                        onBlur={() => {
-                                          if (!values?.company_code) {
-                                            handleBlur("company_code");
-                                            setIsInputEditCC(false);
-                                          }
-                                        }}
-                                      />
-                                    </View>
-                                    {touched?.company_code &&
-                                      errors?.company_code && (
-                                        <Animated.Text
-                                          style={[
-                                            styles.errorText,
-                                            {
-                                              opacity: ccErrorAnim,
-                                              transform: [
-                                                {
-                                                  translateX:
-                                                    ccErrorAnim.interpolate({
-                                                      inputRange: [0, 1],
-                                                      outputRange: [-38, 0], // slide from LEFT
-                                                    }),
-                                                },
-                                              ],
-                                            },
-                                          ]}
-                                        >
-                                          {errors?.company_code}
-                                        </Animated.Text>
-                                      )}
-                                  </View>
-                                  }
-                                 
+                                
 
                                   {/* User Input */}
                                   <View style={styles.inputContainer}>

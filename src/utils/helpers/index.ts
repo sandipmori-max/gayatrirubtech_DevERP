@@ -12,6 +12,7 @@ import RNFS from "react-native-fs";
 import FastImage from "react-native-fast-image";
 import { ERP_COLOR_CODE } from "../constants";
 import messaging from "@react-native-firebase/messaging";
+import Share from 'react-native-share';
 
 
 export const formatDateMonthDateYear = (dateString: string) => {
@@ -726,7 +727,6 @@ const operators = {
     if (isNaN(numA) || isNaN(numB)) {
       return false;
     }
-
     return numA < numB;
   },
 
@@ -788,7 +788,26 @@ const operators = {
     const [lat1, lon1] = a.split(",").map(Number);
     const [lat2, lon2] = b.split(",").map(Number);
 
-    return getDistanceInMeters(lat1, lon1, lat2, lon2) <= radius;
+    // return getDistanceInMeters(lat1, lon1, lat2, lon2) <= radius;
+     const distance = getDistanceInMeters(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+  );
+
+  return {
+    isValid: distance <= radius,
+    distance: Math.round(distance),
+    source: {
+      lat: lat1,
+      lon: lon1,
+    },
+    target: {
+      lat: lat2,
+      lon: lon2,
+    },
+  };
   },
   between: (a, min, max) => {
     const num = Number(a);
@@ -842,7 +861,8 @@ const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
       Math.cos((lat2 * Math.PI) / 180) *
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
-
+  const aaaa = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)))
+  console.log("R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)))", aaaa  )
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 };
 
@@ -864,7 +884,21 @@ const evaluateCondition = (rule, values) => {
     return false;
   }
 
-  return operatorFn(leftValue, rightValue, rule.meters);
+  // return operatorFn(leftValue, rightValue, rule.meters);
+  const result = operatorFn(
+  leftValue,
+  rightValue,
+  rule.meters
+);
+
+if (
+  rule.operator === "locationWithin" &&
+  typeof result === "object"
+) {
+  return result;
+}
+
+return result;
 };
 
 export const evaluateRules = (condition, values) => {
@@ -909,7 +943,21 @@ const evaluateCondition2 = (rule, values) => {
     return false;
   }
 
-  return operatorFn(leftValue, rightValue, rule.meters);
+  // return operatorFn(leftValue, rightValue, rule.meters);
+  const result = operatorFn(
+  leftValue,
+  rightValue,
+  rule.meters
+);
+
+if (
+  rule.operator === "locationWithin" &&
+  typeof result === "object"
+) {
+  return result;
+}
+
+return result;
 };
 
 export const evaluateRules2 = (condition, values) => {
@@ -966,6 +1014,7 @@ export const evaluateRulesWithActionsv1 = (
 
   return { isValid: finalResult, actions };
 };
+
 export const applyActionsToControls = (controls, actions) => {
   if (!actions || actions.length === 0) return controls;
 
@@ -1018,17 +1067,27 @@ const collectFailedMessages = (
   }
 
   // leaf rule
-  const isValid = evaluateCondition(
-    condition,
-    values
-  );
+  const result = evaluateCondition(
+  condition,
+  values
+);
 
-  if (!isValid && condition.message) {
-    messages.push({
-      field: condition.left,
-      message: condition.message,
-    });
-  }
+console.log("condition-----", condition)
+
+const isValid =
+  typeof result === "object"
+    ? result.isValid
+    : result;
+
+if (!isValid && condition.message) {
+  messages.push({
+    field: condition.left,
+    message:
+      condition?.operator === 'locationWithin'
+  ? `${condition.message}${result?.distance ? `\n\t You are not within range [ Distance ${result.distance} meter ]` : ''}`.trim()
+  : condition.message,
+  });
+}
 
   return messages;
 };
@@ -1216,7 +1275,9 @@ export const applyFormula = (config, values) => {
 
     const from = values[config.fromField];
     const to = values[config.toField];
-
+    if (from && to && new Date(from) > new Date(to)) {
+      return { ...values, [config.fieldName]: "-" };
+    }
     if (!from || !to) {
       return { ...values, [config.fieldName]: "" };
     }
@@ -1388,7 +1449,6 @@ export const getDashboardIcon = (type) => {
     if (s === "punch missing") return "#9e9e9e"; // grey
     if (s === "working") return "#4caf50"; // green-ish
     if (s === "fullday") return "#4caf50";
-
     return ERP_COLOR_CODE.ERP_APP_COLOR;
   };
 
@@ -1426,4 +1486,98 @@ export const requestAndroidPermission = async () => {
   );
 
   return granted === PermissionsAndroid.RESULTS.GRANTED;
+};
+
+
+ const getFileNameFromUrl = (
+  url: string,
+  mimeType?: string,
+) => {
+  try {
+    const cleanUrl = url.split('?')[0];
+    const name = cleanUrl.substring(
+      cleanUrl.lastIndexOf('/') + 1,
+    );
+
+    // URL already contains filename
+    if (name && name.includes('.')) {
+      return decodeURIComponent(name);
+    }
+
+    // Generate filename
+    const extension =
+      mimeType?.split('/')[1] || 'bin';
+
+    return `file_${Date.now()}.${extension}`;
+  } catch {
+    return `file_${Date.now()}.bin`;
+  }
+};
+
+  //   // Download PDF
+export const downloadAndShare = async (
+  fileUrl: string,
+  mimeType = 'application/octet-stream',
+) => {
+  console.log('========== DOWNLOAD & SHARE ==========');
+  console.log('File URL:', fileUrl);
+  console.log('Mime Type:', mimeType);
+
+  try {
+    const fileName = getFileNameFromUrl(fileUrl, mimeType);
+    console.log('File Name:', fileName);
+
+    const localPath = `${RNFS.CachesDirectoryPath}/${fileName}`;
+    console.log('Local Path:', localPath);
+
+    // Delete old file
+    if (await RNFS.exists(localPath)) {
+      console.log('Old file exists. Deleting...');
+      await RNFS.unlink(localPath);
+    }
+
+    console.log('Starting download... ');
+
+    const downloadResult = await RNFS.downloadFile({
+      fromUrl: fileUrl,
+      toFile: localPath,
+      background: true,
+      discretionary: true,
+    }).promise;
+
+    console.log('Download Result:', downloadResult);
+
+    const exists = await RNFS.exists(localPath);
+    console.log('File Exists:', exists);
+
+    if (!exists) {
+      throw new Error('Downloaded file does not exist.');
+    }
+
+    const stat = await RNFS.stat(localPath);
+    console.log('File Stat:', stat);
+    console.log('File Size:', stat.size);
+
+    console.log('Sharing to WhatsApp...');
+
+    const shareResult = await Share.shareSingle({
+      social: Share.Social.WHATSAPP,
+      url: `file://${localPath}`,
+      type: mimeType,
+      filename: fileName,
+      failOnCancel: false,
+    });
+
+    console.log('Share Success:', shareResult);
+    console.log('========== SUCCESS ==========');
+  } catch (e: any) {
+    Alert.alert('Error', `${JSON.stringify(e)}`)
+    console.log('========== ERROR ==========');
+    console.log('Error:', e);
+    console.log('Error JSON:', JSON.stringify(e, null, 2));
+    console.log('Code:', e?.code);
+    console.log('Message:', e?.message);
+    console.log('Stack:', e?.stack);
+    console.log('===========================');
+  }
 };

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Text,
   TextInput,
@@ -20,7 +20,6 @@ import useTranslations from "../../../../hooks/useTranslations";
 import InputError from "../../../../components/error/InputError";
 import NoData from "../../../../components/no_data/NoData";
 import TranslatedText from "../../tabs/home/TranslatedText";
-import InfoTooltip from "./Tooltip";
 import LableInfo from "./LableInfo";
 import DeviceInfo from "react-native-device-info";
 
@@ -58,6 +57,9 @@ const AjaxPicker = ({
     return () => clearTimeout(timer);
   }, [search]);
 
+  const [isSearchInputAllowed, setIsSearchInputAllowed] = useState(false)
+  const optionsRef = useRef([]);
+
   useEffect(() => {
     setSelectedOption(item?.dtext || item?.text || item?.value);
   }, [dtext, item]);
@@ -88,6 +90,9 @@ const AjaxPicker = ({
         }),
       ).unwrap();
       setOptions(res?.data ?? []);
+      if (optionsRef.current.length === 0 && res?.data.length > 0) {
+        optionsRef.current = res?.data;
+      }
       setLoader(false);
     } catch (e) {
       setOptions([]);
@@ -127,6 +132,25 @@ const AjaxPicker = ({
     setOpen(false);
   };
 
+  const hasSingleKeyValue = (arr) => {
+    return (
+      Array.isArray(arr) &&
+      arr.length > 0 &&
+      arr.every(
+        (item) =>
+          typeof item === "object" &&
+          item !== null &&
+          !Array.isArray(item) &&
+          Object.keys(item).length === 1
+      )
+    );
+  };
+
+  useEffect(() => {
+    setIsSearchInputAllowed(hasSingleKeyValue(optionsRef.current));
+  }, [search]);
+
+  console.log('isssssssss', isSearchInputAllowed, options)
   return (
     <View style={{ marginBottom: Platform.OS === 'android' ? 6 : 8 }}>
       <LableInfo isFromChild={isFromChild}
@@ -304,6 +328,7 @@ const AjaxPicker = ({
                 </View>
               ) : (
                 <ScrollView
+                  bounces={false}
                   keyboardShouldPersistTaps="handled"
                   showsVerticalScrollIndicator={false}
                 >
@@ -391,18 +416,44 @@ const AjaxPicker = ({
                       );
                     })
                   ) : (
-                    <View
-                      style={{
-                        marginVertical: 12,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: 100,
-                        alignContent: "center",
-                        marginTop: 200,
-                      }}
-                    >
-                      <NoData isShowTop={false} />
-                    </View>
+                    <>
+
+                      {
+                        isSearchInputAllowed ? <>
+
+                          <TouchableOpacity
+                            onPress={() => {
+                              console.log(optionsRef)
+                              const key = Object.keys(optionsRef.current[0])[0];
+                              console.log(key);
+                              let opt = {
+                                [key]: search
+                              }
+                              handleSelect(opt)
+                            }}
+                          >
+                            <Text style={{
+                              color: 'blue',
+                              padding: 10
+                            }}>
+                              {search}
+                            </Text>
+                          </TouchableOpacity>
+                        </> : <View
+                          style={{
+                            marginVertical: 12,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: 100,
+                            alignContent: "center",
+                            marginTop: 200,
+                          }}
+                        >
+                          <NoData isShowTop={false} />
+                        </View>
+                      }
+                    </>
+
                   )}
                 </ScrollView>
               )}

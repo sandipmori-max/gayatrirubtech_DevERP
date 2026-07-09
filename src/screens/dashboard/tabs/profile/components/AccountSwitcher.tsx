@@ -171,17 +171,17 @@ const isIpad =
     if (accountId !== activeAccountId) {
      await dispatch(switchAccountThunk(accountId)).unwrap();
      dispatch(setBirthdayUsers([]));
-    //  await dispatch(getLastPunchInThunk());
-    //   try {
-    //    await dispatch(getERPAppConfigMenuThunk());
-    //   } catch (error) {
-    //     dispatch(updateAppMenuList([])); // Clear menu on error
-    //     console.log("Error fetching app config menu:", error);
-    //   }
-    //   setTimeout(() => {
-    //     dispatch(setLoading(false));
-    //     dispatch(setReloadApp());
-    //   }, 1000);
+     await dispatch(getLastPunchInThunk());
+      try {
+       await dispatch(getERPAppConfigMenuThunk());
+      } catch (error) {
+        dispatch(updateAppMenuList([]));
+        console.log("Error fetching app config menu:", error);
+      }
+      setTimeout(() => {
+        dispatch(setLoading(false));
+        dispatch(setReloadApp());
+      }, 1000);
     }
     onClose();
   };
@@ -516,6 +516,8 @@ const isIpad =
           }}
         >
           <FlatList
+                            bounces={false}
+
             key={isLandscape ? "landscape" : "portrait"}
             data={accounts}
             renderItem={renderAccount}

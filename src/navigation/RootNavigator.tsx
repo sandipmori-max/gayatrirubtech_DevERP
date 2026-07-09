@@ -24,7 +24,7 @@ import FullViewLoader from "../components/loader/FullViewLoader";
 import DeviceInfo from "react-native-device-info";
 import CustomAlert from "../components/alert/CustomAlert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ERP_COLOR_CODE } from "../utils/constants";
+import { ERP_COLOR_CODE, setERPAppColor } from "../utils/constants";
 import { changeLanguage } from "../i18n";
 import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { getLastPunchInThunk } from "../store/slices/attendance/thunk";
@@ -36,6 +36,9 @@ import {
   updatePinVerifyLoadedState,
 } from "../store/slices/auth/authSlice";
 import { useTranslation } from "react-i18next";
+import NetInfo from "@react-native-community/netinfo";
+import NoInternetScreen from "../screens/noInternet/NoInternet";
+import { getActiveAccount, getDBConnection } from "../utils/sqlite";
 
 // ------------------------- Location Permission Helper -------------------------
 export async function requestLocationPermissions(): Promise<
@@ -97,8 +100,10 @@ const RootNavigator = () => {
   };
   const { height, width } = useWindowDimensions();
   const isLandscape = width > height;
-  const { isLoading, isAuthenticated, accounts, user, attendanceDone } =
+  const { isLoading, isAuthenticated, accounts, user, attendanceDone, appColorCode, attendanceSecurityLevel } =
     useAppSelector((state) => state.auth);
+
+  const [forceLoader, setForceLoader] = useState(false);
   const { reLoading } = useAppSelector((state) => state.reloadApp);
 
   const langCode = useAppSelector((state) => state.theme.langcode);
@@ -116,9 +121,9 @@ const RootNavigator = () => {
   const locationModalShownRef = useRef(false);
   const appState = useRef(AppState.currentState);
 
-  const locationServiceIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const locationServiceIntervalRef = useRef(null);
   const gpsModalShownRef = useRef(false);
-
+  const { appBottomMenuList, appDrawerMenuList } = useAppSelector((state) => state?.auth);
   const checkLocationServiceOnly = async () => {
     if (!isAuthenticated) return;
 
@@ -151,8 +156,20 @@ const RootNavigator = () => {
   };
 
   const app_id = user?.app_id;
+  const [noInterNet, setNoInterNet] = useState(false)
   // ------------------------- Device Setup -------------------------
   const init = async () => {
+    setForceLoader(true)
+    const state = await NetInfo.fetch();
+    if (!state.isConnected) {
+      setNoInterNet(true)
+      return Promise.reject({
+        message: "Please check your network and try again. You can tap Refresh or close and reopen the app",
+        statusCode: 0,
+      });
+    }
+    setNoInterNet(false)
+
     const name =
       Platform.OS === "ios"
         ? DeviceInfo.getModel() + " " + (await DeviceInfo.getUniqueId())
@@ -171,16 +188,25 @@ const RootNavigator = () => {
     await DevERPService.initialize().then(async () => {
       DevERPService.setAppId(appid || "");
       DevERPService.setDevice(name);
+      const db = await getDBConnection();
+       const activeAccount = await getActiveAccount(db);
+       if(activeAccount){
+        DevERPService.setToken(activeAccount.user.token);
+       }
       try {
+        const state = await NetInfo.fetch();
+        if (!state.isConnected) {
+          return;
+        }
         dispatch(setLoading(true));
         console.log("Checking auth state...");
         await dispatch(checkAuthStateThunk()).unwrap();
         await new Promise(res => setTimeout(res, 900));
         console.log("Auth state checked successfully.");
-
         if (isAuthenticated) {
+          setERPAppColor(appColorCode)
           try {
-            dispatch(getLastPunchInThunk())
+            await dispatch(getLastPunchInThunk())
               .unwrap()
               .then((res) => {
                 if (res?.success === 1 || res?.success === "1") {
@@ -196,12 +222,15 @@ const RootNavigator = () => {
             dispatch(updateAttendanceState(false));
             console.log("error*******", error);
           }
-          try {
-            await dispatch(getERPAppConfigMenuThunk());
-          } catch (error) {
-            dispatch(updateAppMenuList([]));
-            console.log("Error fetching app config menu:", error);
+          if (appDrawerMenuList.length === 0 || appBottomMenuList.length === 0) {
+            try {
+              await dispatch(getERPAppConfigMenuThunk());
+            } catch (error) {
+              dispatch(updateAppMenuList([]));
+              console.log("Error fetching app config menu:", error);
+            }
           }
+
         }
       } catch (err) {
         if (err === "token_expired") {
@@ -216,12 +245,14 @@ const RootNavigator = () => {
     })
       .catch((err) => {
         console.log("Initialization failed", err);
-      });;
+      });
+    setForceLoader(false)
 
 
   };
 
   useEffect(() => {
+
     init();
     return () => {
       dispatch(setReloadApp());
@@ -356,6 +387,7 @@ const RootNavigator = () => {
   // ------------------------- Focus -------------------------
   useEffect(() => {
     if (isAuthenticated) {
+      setERPAppColor(appColorCode)
       // Optional: cancel timeout if component unmounts
       const timer = setTimeout(() => {
         if (attendanceDone) {
@@ -377,53 +409,65 @@ const RootNavigator = () => {
   }, [isAuthenticated, reLoading, attendanceDone]);
 
   // ------------------------- Render -------------------------
-  if (isLoading) return <FullViewLoader />;
+  if (isLoading || forceLoader) return <FullViewLoader />;
 
   return (
     <>
-      {isAuthenticated ? <StackNavigator /> : <AuthNavigator />}
-      {isAuthenticated && (
-        <CustomAlert
-          visible={alertVisible}
-          title={alertConfig.title}
-          message={alertConfig.message}
-          type={alertConfig.type}
-          onClose={() => {
-            // setAlertVisible(true)
-          }}
-          isSettingVisible={openSettings}
-          actionLoader={undefined}
-          closeHide={true}
-        />
-      )}
-      {isAuthenticated && (
-        <Modal
-          visible={backgroundDeniedModal}
-          supportedOrientations={["portrait", "landscape"]}
-          transparent
-        >
-          <View
-            style={[
-              styles.overlay,
-              isLandscape && {
-                alignContent: "center",
-                alignItems: "center",
-              },
-            ]}
-          >
-            <View style={[styles.modalContainer, {}]}>
-              <Text style={styles.title}>{t("test21")}</Text>
-              <Text style={styles.message}>{t("test22")}</Text>
-              <TouchableOpacity
-                style={styles.btnPrimary}
-                onPress={() => Linking.openSettings()}
+      {
+        noInterNet && <View style={[StyleSheet.absoluteFillObject, { zIndex: 1000 }]}>
+          <NoInternetScreen onRetry={() => { }} />
+        </View>
+      }
+      {
+        forceLoader ? <>
+          <FullViewLoader />
+        </> : <>
+
+          {isAuthenticated ? <StackNavigator /> : <AuthNavigator />}
+          {isAuthenticated && (
+            <CustomAlert
+              visible={alertVisible}
+              title={alertConfig.title}
+              message={alertConfig.message}
+              type={alertConfig.type}
+              onClose={() => {
+                // setAlertVisible(true)
+              }}
+              isSettingVisible={openSettings}
+              actionLoader={undefined}
+              closeHide={true}
+            />
+          )}
+          {isAuthenticated && (
+            <Modal
+              visible={backgroundDeniedModal}
+              supportedOrientations={["portrait", "landscape"]}
+              transparent
+            >
+              <View
+                style={[
+                  styles.overlay,
+                  isLandscape && {
+                    alignContent: "center",
+                    alignItems: "center",
+                  },
+                ]}
               >
-                <Text style={styles.btnText}>{t("test23")}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
+                <View style={[styles.modalContainer, {}]}>
+                  <Text style={styles.title}>{t("test21")}</Text>
+                  <Text style={styles.message}>{t("test22")}</Text>
+                  <TouchableOpacity
+                    style={styles.btnPrimary}
+                    onPress={() => Linking.openSettings()}
+                  >
+                    <Text style={styles.btnText}>{t("test23")}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          )}
+        </>
+      }
     </>
   );
 };

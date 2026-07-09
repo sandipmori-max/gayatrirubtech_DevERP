@@ -14,7 +14,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import { Linking, Alert } from 'react-native';
 import { formatDateList } from "../../../../utils/helpers";
 import { styles } from "../list_page_style";
 import NoData from "../../../../components/no_data/NoData";
@@ -26,6 +26,8 @@ import ImageBottomSheetModal from "../../../../components/bottomsheet/ImageBotto
 import RemarksView from "./RemarksView";
 import MemoizedFooterView from "./MemoizedFooterView";
 import DeviceInfo from "react-native-device-info";
+import Share from 'react-native-share';
+import RNFS from "react-native-fs";
 
 if (
   Platform.OS === "android" &&
@@ -190,6 +192,54 @@ const ReadableView = ({
       item?.image && item?.image?.replace(/^https:\/\\/, "http://");
     const authUser = item?.authuser;
     const qty = item?.qty;
+ 
+ const shareTextToWhatsApp = async () => {
+  const phone = '918154877969';
+  const text = encodeURIComponent('Hello Sandip');
+
+  try {
+    await Linking.openURL(
+      `whatsapp://send?phone=${phone}&text=${text}`,
+    );
+  } catch {
+    await Linking.openURL(
+      `https://wa.me/${phone}?text=${text}`,
+    );
+  }
+};
+
+const sharePdf = async () => {
+  try {
+    const pdfUrl = 'https://pdfobject.com/pdf/sample.pdf';
+
+    const localFile =
+      `${RNFS.DocumentDirectoryPath}/sample.pdf`;
+
+    await RNFS.downloadFile({
+      fromUrl: pdfUrl,
+      toFile: localFile,
+    }).promise;
+
+    await Share.open({
+      url: `file://${localFile}`,
+      type: 'application/pdf',
+      failOnCancel: false,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const openShareDialog = async () => {
+  try {
+    await Share.open({
+      message: 'Hello from React Native',
+      failOnCancel: false,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
     const { user } = useAppSelector((state) => state.auth);
     const avatarLetter =
       typeof name === "string" && name.trim() !== ""
@@ -618,6 +668,8 @@ const ReadableView = ({
       </>
     );
 
+   
+
     return (
       <>
         {isFromAlertCard ? (
@@ -658,6 +710,8 @@ const ReadableView = ({
   return (
     <View style={{ flex: 1, marginTop: 0 }}>
       <FlatList
+                        bounces={false}
+
         keyExtractor={(_, index) => index.toString()}
         data={listData}
         keyboardShouldPersistTaps="handled"

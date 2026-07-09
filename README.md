@@ -7102,3 +7102,10 @@ error ---------------------  NativeFirebaseError: [messaging/unknown] java.io.IO
 data
 : 
 "{\"appid\":\"f602cdd2-d9f7-4515-b56b-e2da5980e554\",\"device\":\"iPhone 17 Pro 86A733F0-9B07-4E7E-AF0A-22779A2C3D93\"}"
+
+  const gradientColors =
+    theme === "dark"
+      ? ["#000", "#000"]
+      : ["#fff", "#fff", "#fff"];
+
+ ONLY - Android 

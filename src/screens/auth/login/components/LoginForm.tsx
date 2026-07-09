@@ -77,7 +77,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   }, [isLoading, validationLoading, erpLoginLoading]);
 
   const initialFormValues = {
-    company_code: '',
+    company_code: 'GAYATRIRUBTECH',
     user: '',
     password: '',
     firebaseid: fcmToken,

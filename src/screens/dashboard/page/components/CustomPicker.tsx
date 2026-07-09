@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
-  Text,
   TouchableOpacity,
   View,
   Modal,
   Animated,
   TouchableWithoutFeedback,
-  Dimensions,
   ScrollView,
   useWindowDimensions,
   Platform,
@@ -283,6 +281,7 @@ const CustomPicker = ({
             <FullViewLoader isShowTop={false} />
           ) : (
             <ScrollView
+              bounces={false}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
               onContentSizeChange={(w, h) => {
@@ -316,9 +315,9 @@ const CustomPicker = ({
                     ]}
                     onPress={() => {
                       if (!isForceOpen) {
-                        onValueChange(opt);
+                        onValueChange(opt, "isFromDropdown");
                       } else {
-                        onValueChange(opt?.value);
+                        onValueChange(opt?.value, "isFromDropdown");
                       }
                       setSelectedOption(opt?.name);
                       closeBottomSheet();
