@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   },
   logo: {
     marginTop: 4,
-    width: 220,
+    width: 100,
     height: 100,
     alignSelf: 'center',
     marginBottom: 25,

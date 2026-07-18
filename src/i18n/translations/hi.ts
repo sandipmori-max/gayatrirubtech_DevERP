@@ -1,6 +1,6 @@
 export default {
   common: {
-    appName: "Gayatri rub tech", // app name same
+    appName: "DevERP", // app name same
     loading: "लोड हो रहा है…", // correct
     error: "एक त्रुटि हुई",
     success: "सफल!", // more common in UI
@@ -266,7 +266,7 @@ export default {
     text50: "प्रतिवेदन",
     text51: "प्रतिवेदन खोजें...",
     text52: "मुख्य पृष्ठ",
-    text53: "Gayatri rub tech में आपका स्वागत है",
+    text53: "DevERP में आपका स्वागत है",
     text54: "आपका व्यवसाय, सरल बनाया गया।",
   },
 

@@ -522,7 +522,7 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                   >
                     <Formik
                       initialValues={{
-                        company_code: "GAYATRIRUBTECH",
+                        company_code: user?.company_code?.toLowerCase()?.includes("gayatrirubtech") ? 'gayatrirubtech' : "",
                         user: "",
                         password: "",
                       }}
@@ -541,7 +541,99 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                         return (
                           <>
                             {/* Company Code Input */}
-                           
+                            {
+                              !user?.company_code?.toLowerCase()?.includes("gayatrirubtech") && <View style={styles.inputContainer}>
+                              <Text
+                                style={[
+                                  styles.inputLabel,
+                                  theme === "dark" && { color: "white" },
+                                ]}
+                              >
+                                {t("account.companyCode")}
+                              </Text>
+                              <View
+                                style={[
+                                  styles.inputContainer,
+                                  {
+                                    justifyContent: "center",
+                                    alignContent: "center",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    borderRadius: 8,
+                                    borderWidth: 1,
+                                    borderColor: ERP_COLOR_CODE.ERP_BORDER_LINE,
+                                    paddingLeft: 12,
+                                  },
+                                  touched?.company_code &&
+                                  errors?.company_code && {
+                                    borderColor: ERP_COLOR_CODE.ERP_ERROR,
+                                    borderWidth: 0.8,
+                                  },
+                                  isInputEditCC && {
+                                    borderColor: "#81b5e4",
+                                    borderWidth: 0.8,
+                                  },
+                                  values?.company_code && {
+                                    borderColor: "green",
+                                    borderWidth: 0.8,
+                                  },
+                                  theme === "dark" && {
+                                    backgroundColor: "black",
+                                  },
+                                ]}
+                              >
+                                <MaterialIcons
+                                  name="closed-caption-off"
+                                  size={20}
+                                  color={ERP_COLOR_CODE.ERP_999}
+                                />
+                                <TextInput
+                                  style={[
+                                    styles.input,
+                                    theme === "dark" && {
+                                      backgroundColor: "black",
+                                      color: "white",
+                                    },
+                                  ]}
+                                  placeholder={t("auth.enterCompanyCode")}
+                                  placeholderTextColor={ERP_COLOR_CODE.ERP_999}
+                                  autoCapitalize="none"
+                                  onChangeText={handleChange("company_code")}
+                                  value={values?.company_code}
+                                  onFocus={() => setIsInputEditCC(true)}
+                                  onBlur={() => {
+                                    if (!values?.company_code) {
+                                      handleBlur("company_code");
+                                      setIsInputEditCC(false);
+                                    }
+                                  }}
+                                />
+                              </View>
+                              {touched?.company_code &&
+                                errors?.company_code && (
+                                  <Animated.Text
+                                    style={[
+                                      styles.errorText,
+                                      {
+                                        opacity: ccErrorAnim,
+                                        transform: [
+                                          {
+                                            translateX: ccErrorAnim.interpolate(
+                                              {
+                                                inputRange: [0, 1],
+                                                outputRange: [-38, 0], // slide from LEFT
+                                              },
+                                            ),
+                                          },
+                                        ],
+                                      },
+                                    ]}
+                                  >
+                                    {errors?.company_code}
+                                  </Animated.Text>
+                                )}
+                            </View>
+                            }
                             
 
                             {/* User Input */}
@@ -882,7 +974,7 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
 
                           <Formik
                             initialValues={{
-                              company_code: 'GAYATRIRUBTECH' ,
+                              company_code: user?.company_code?.toLowerCase()?.includes("gayatrirubtech") ? 'gayatrirubtech' : "",
                               user: "",
                               password: "",
                             }}
@@ -904,7 +996,112 @@ const AddAccountScreen: React.FC<AddAccountScreenProps> = ({
                               return (
                                 <>
                                   {/* Company Code Input */}
-                                
+                                  {
+                                    !user?.company_code?.toLowerCase()?.includes("gayatrirubtech") &&  <View style={styles.inputContainer}>
+                                    <Text
+                                      style={[
+                                        styles.inputLabel,
+                                        theme === "dark" && {
+                                          color: "white",
+                                        },
+                                      ]}
+                                    >
+                                      {t("account.companyCode")}
+                                    </Text>
+                                    <View
+                                      style={[
+                                        styles.inputContainer,
+                                        {
+                                          justifyContent: "center",
+                                          alignContent: "center",
+                                          flexDirection: "row",
+                                          alignItems: "center",
+                                          borderRadius: 8,
+                                          borderWidth: 1,
+                                          borderColor:
+                                            ERP_COLOR_CODE.ERP_BORDER_LINE,
+                                          paddingLeft: 12,
+                                        },
+                                        touched?.company_code &&
+                                        errors?.company_code && {
+                                          borderColor:
+                                            ERP_COLOR_CODE.ERP_ERROR,
+                                          borderWidth: 0.8,
+                                        },
+                                        isInputEditCC && {
+                                          borderColor: "#81b5e4",
+                                          borderWidth: 0.8,
+                                        },
+                                        values?.company_code && {
+                                          borderColor: "green",
+                                          borderWidth: 0.8,
+                                        },
+                                        theme === "dark" && {
+                                          backgroundColor: "black",
+                                        },
+                                      ]}
+                                    >
+                                      <MaterialIcons
+                                        name="closed-caption-off"
+                                        size={20}
+                                        color={ERP_COLOR_CODE.ERP_999}
+                                      />
+                                      <TextInput
+                                        style={[
+                                          styles.input,
+                                          theme === "dark" && {
+                                            backgroundColor: "black",
+                                            color: "white",
+                                          },
+                                          isIpad && {
+                                            paddingVertical: 16,
+                                          }
+                                        ]}
+                                        placeholder={t(
+                                          "auth.enterCompanyCode",
+                                        )}
+                                        placeholderTextColor={
+                                          ERP_COLOR_CODE.ERP_999
+                                        }
+                                        autoCapitalize="none"
+                                        onChangeText={handleChange(
+                                          "company_code",
+                                        )}
+                                        value={values?.company_code}
+                                        onFocus={() => setIsInputEditCC(true)}
+                                        onBlur={() => {
+                                          if (!values?.company_code) {
+                                            handleBlur("company_code");
+                                            setIsInputEditCC(false);
+                                          }
+                                        }}
+                                      />
+                                    </View>
+                                    {touched?.company_code &&
+                                      errors?.company_code && (
+                                        <Animated.Text
+                                          style={[
+                                            styles.errorText,
+                                            {
+                                              opacity: ccErrorAnim,
+                                              transform: [
+                                                {
+                                                  translateX:
+                                                    ccErrorAnim.interpolate({
+                                                      inputRange: [0, 1],
+                                                      outputRange: [-38, 0], // slide from LEFT
+                                                    }),
+                                                },
+                                              ],
+                                            },
+                                          ]}
+                                        >
+                                          {errors?.company_code}
+                                        </Animated.Text>
+                                      )}
+                                  </View>
+                                  }
+                                 
 
                                   {/* User Input */}
                                   <View style={styles.inputContainer}>

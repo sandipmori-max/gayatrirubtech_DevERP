@@ -450,7 +450,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
                         <ERPIcon name="search" onPress={() => setShowSearch(true)} />
                       )}
 
-                      {attendanceDone && user?.id == (user?.company_code?.toLowerCase()?.includes("GAYATRIRUBTECH") ? "16" : "113") && (
+                      {attendanceDone && user?.id == (user?.company_code?.toLowerCase()?.includes("gayatrirubtech") ? "16" : "113") && (
                         <ERPIcon
                           color={"green"}
                           name={"location-on"}
@@ -952,6 +952,8 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
           getERPPageThunk({ page: "Dashboard", id: "" }),
         ).unwrap();
 
+        console.log("parsed-----", parsed)
+
         const normalizedControls = (parsed?.pagectl || []).map((c) => ({
           ...c,
           disabled: String(c?.disabled ?? "0"),
@@ -963,7 +965,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
 
         await fetchData(normalizedControls, fromDate, toDate);
       } catch (e) {
-        console.log("fetchPageData error:", e);
+        console.log("fetchPageData error 66 ++ ++ + + ++ + + + + :", e);
       } finally {
         setControlsLoader(false);
         setLoadingPageId(null);
@@ -1599,7 +1601,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
           {
             dashboard.length === 0 && <>
               {
-                user?.company_code?.toLowerCase()?.includes("GAYATRIRUBTECH") ? <View
+                user?.company_code?.toLowerCase()?.includes("gayatrirubtech") ? <View
                   style={{
                     height: Dimensions.get('screen').height * 0.75,
                     justifyContent: 'center',
@@ -2107,7 +2109,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
                 ) : dashboard?.length === 0 && !isDashboardLoading ? (
                   <>
                     {
-                      user?.company_code?.toLowerCase()?.includes("GAYATRIRUBTECH") ? <View
+                      user?.company_code?.toLowerCase()?.includes("gayatrirubtech") ? <View
                         style={{
                           height: Dimensions.get('screen').height * 0.75,
                           justifyContent: 'center',
@@ -2136,7 +2138,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
                         :
                         <>
                           {
-                            user?.company_code?.toLowerCase()?.includes("GAYATRIRUBTECH") ?
+                            user?.company_code?.toLowerCase()?.includes("gayatrirubtech") ?
 
                               <View
                                 style={{
@@ -3022,7 +3024,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
                       />
 
                       {
-                        user?.company_code?.toLowerCase()?.includes("GAYATRIRUBTECH") && <View style={{
+                        user?.company_code?.toLowerCase()?.includes("gayatrirubtech") && <View style={{
                           height: 350, width: '100%',
                           alignContent: 'center',
                           alignItems: 'center',
@@ -3068,7 +3070,7 @@ const HomeScreen = ({ setHideTab, hideTab }: any) => {
         />
       )}
       {
-        !user?.company_code?.toLowerCase()?.includes("GAYATRIRUBTECH") && <GreetingBottomSheet
+        !user?.company_code?.toLowerCase()?.includes("gayatrirubtech") && <GreetingBottomSheet
           visible={visibleAI}
           message={aiMessage}
           onClose={() => setVisibleAI(false)}

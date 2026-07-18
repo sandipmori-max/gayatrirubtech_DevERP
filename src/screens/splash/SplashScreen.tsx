@@ -27,8 +27,8 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
   const textTranslateY = useRef(new Animated.Value(40)).current;
   const subtitleOpacity = useRef(new Animated.Value(0)).current;
   const greetingOpacity = useRef(new Animated.Value(0)).current;
-  const isIpad =
-    (Platform.OS === "ios" && Platform.isPad) || DeviceInfo.isTablet() || Platform.isTV;
+ const isIpad =
+   ( Platform.OS === "ios" && Platform.isPad) || DeviceInfo.isTablet() || Platform.isTV;
   // NEW SPLASH ANIMATIONS
   const topImageAnim = useRef(new Animated.Value(-200)).current;
   const bottomImageAnim = useRef(new Animated.Value(200)).current;
@@ -51,96 +51,102 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
     return "Good Evening";
   }, []);
 
-  useEffect(() => {
-    const start = Date.now();
+    useEffect(() => {
+  const start = Date.now();
 
-    // ✅ Total splash visible time
-    const TOTAL_SPLASH_TIME = 2200;
+  // ✅ Total splash visible time
+  const TOTAL_SPLASH_TIME = 2200;
 
-    Animated.sequence([
-      // 🔥 Background animation
-      Animated.parallel([
-        Animated.spring(topImageAnim, {
-          toValue: 0,
-          damping: 14,
-          stiffness: 180,
-          mass: 0.7,
-          useNativeDriver: true,
-        }),
-
-        Animated.spring(bottomImageAnim, {
-          toValue: 0,
-          damping: 14,
-          stiffness: 180,
-          mass: 0.7,
-          useNativeDriver: true,
-        }),
-      ]),
-
-      // 🔥 Logo animation
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 320,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          friction: 4,
-          tension: 90,
-          useNativeDriver: true,
-        }),
-
-        Animated.timing(logoRotate, {
-          toValue: 1,
-          duration: 320,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-
-      // 🔥 Greeting animation
-      Animated.parallel([
-        Animated.timing(greetingOpacity, {
-          toValue: 1,
-          duration: 300,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-
-        Animated.timing(textTranslateY, {
-          toValue: 0,
-          duration: 300,
-          easing: Easing.out(Easing.exp),
-          useNativeDriver: true,
-        }),
-      ]),
-
-      // 🔥 Subtitle fade
-      Animated.timing(subtitleOpacity, {
-        toValue: 1,
-        duration: 250,
-        easing: Easing.linear,
+  Animated.sequence([
+    // 🔥 Background animation
+    Animated.parallel([
+      Animated.spring(topImageAnim, {
+        toValue: 0,
+        damping: 14,
+        stiffness: 180,
+        mass: 0.7,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      const elapsed = Date.now() - start;
 
-      const remainingTime = TOTAL_SPLASH_TIME - elapsed;
+      Animated.spring(bottomImageAnim, {
+        toValue: 0,
+        damping: 14,
+        stiffness: 180,
+        mass: 0.7,
+        useNativeDriver: true,
+      }),
+    ]),
 
-      if (remainingTime > 0) {
-        setTimeout(onFinish, remainingTime);
-      } else {
-        onFinish();
-      }
-    });
-  }, []);
+    // 🔥 Logo animation
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 320,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 4,
+        tension: 90,
+        useNativeDriver: true,
+      }),
+
+      Animated.timing(logoRotate, {
+        toValue: 1,
+        duration: 320,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]),
+
+    // 🔥 Greeting animation
+    Animated.parallel([
+      Animated.timing(greetingOpacity, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+
+      Animated.timing(textTranslateY, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+    ]),
+
+    // 🔥 Subtitle fade
+    Animated.timing(subtitleOpacity, {
+      toValue: 1,
+      duration: 250,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }),
+  ]).start(() => {
+    const elapsed = Date.now() - start;
+
+    const remainingTime = TOTAL_SPLASH_TIME - elapsed;
+
+    if (remainingTime > 0) {
+      setTimeout(onFinish, remainingTime);
+    } else {
+      onFinish();
+    }
+  });
+}, []);
   const gradientColors =
     theme === "dark"
-      ? ["#000", "#000"]
-      : ["#fff", "#fff", "#fff"];
+      ? ["#000000", "#1a1a1a"]
+      : appColorCode
+      ? [
+          ERP_COLOR_CODE.ERP_APP_COLOR,
+          "#4c669f",
+          "#3b5998",
+        ]
+      : ["#4c669f", "#3b5998", "#192f6a"];
 
   const rotateInterpolate = logoRotate.interpolate({
     inputRange: [0, 1],
@@ -233,7 +239,7 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
             >
               <Image
                 source={user?.companyLogo || ERP_ICON.APP_LOGO}
-                style={{ height: 200, width: 220 }}
+                style={{ height: 90, width: 90 }}
                 resizeMode="contain"
               />
             </Animated.View>
@@ -324,8 +330,8 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
             <Image
               source={user?.companyLogo || ERP_ICON.APP_LOGO}
               style={[styles.logo, isIpad && {
-                height: 90,
-                width: 90,
+                  height: 90,
+                  width: 90,
               }]}
               resizeMode="contain"
             />

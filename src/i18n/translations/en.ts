@@ -1,6 +1,6 @@
 export default {
   common: {
-    appName: 'Gayatri rub tech',
+    appName: 'DevERP',
     loading: 'Loading...',
     error: 'An error occurred',
     success: 'Success!',
