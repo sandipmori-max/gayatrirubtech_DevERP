@@ -21,8 +21,8 @@ android {
         applicationId "com.gayatrirubtech"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "1.3.0"
+        versionCode 16
+        versionName "1.0.6"
     }
     signingConfigs {
         debug {
