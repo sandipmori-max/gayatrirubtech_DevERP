@@ -119,6 +119,7 @@ const StackNavigator = () => {
         headerStyle: {},
       }}
     >
+      
       {isPinLoaded === true && (
         <Stack.Screen
           name="Startup"

@@ -59,7 +59,11 @@ class LocationModule(private val reactContext: ReactApplicationContext) :
         val serviceIntent = Intent(reactContext, LocationService::class.java)
         reactContext.stopService(serviceIntent)
     }
-
+    @ReactMethod
+fun clearUserTokens() {
+    LocationService.userDataList.clear()
+    Log.d("LocationModule", "🧹 User tokens cleared")
+}
   @ReactMethod
 fun getCurrentLocation(
     promise: Promise

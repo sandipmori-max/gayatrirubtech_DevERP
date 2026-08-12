@@ -573,16 +573,14 @@ export const clearAllTempFiles = async () => {
     for (const file of files) {
       try {
         await RNFS.unlink(file.path);
-      } catch (err) {}
+      } catch (err) {
+        // ignore individual file failure
+      }
     }
-    FastImage.clearMemoryCache();
-    FastImage.clearDiskCache();
-    if (Platform.OS === "android") {
-      // WebView.clearCache(true);
-    }
-  } catch (err) {}
+  } catch (err) {
+    // ignore temp cleanup failure
+  }
 };
-
 export const getShadowProps = (
   offset: number = 2,
   radius: number = 8,
@@ -1040,6 +1038,17 @@ export const applyActionsToControls = (controls, actions) => {
           return { ...updatedCtrl, text: action.value, dtext: action.value };
         case "setBoolValue":
           return { ...updatedCtrl, text: action.value, field: action.value };
+          case "mandatory":
+            return {
+              ...updatedCtrl,
+              mandatory: "1", // ya true, tumhare control structure ke hisab se
+            };
+
+          case "optional":
+            return {
+              ...updatedCtrl,
+              mandatory: "0", // ya false
+            };
         default:
           return updatedCtrl;
       }
@@ -1206,14 +1215,28 @@ export const runDynamicRules = (
       //   ===
       // 🔥 CONDITION RULE
       //   ===
-      else {
-        const res = evaluateCondition(rule, updatedValues);
-        results.push(res);
+     else {
+  const result = evaluateCondition(rule, updatedValues);
 
-        if (!res && rule.message) {
-          messages.push(rule.message);
-        }
-      }
+const isValid =
+  typeof result === "object"
+    ? result.isValid
+    : result;
+
+results.push(isValid);
+
+if (isValid && rule.validActions) {
+  actions = actions.concat(rule.validActions);
+}
+
+if (!isValid && rule.invalidActions) {
+  actions = actions.concat(rule.invalidActions);
+}
+
+if (!isValid && rule.message) {
+  messages.push(rule.message);
+}
+}
     });
 
     //   ===

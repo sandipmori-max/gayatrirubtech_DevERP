@@ -24,6 +24,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const { t } = useTranslations();
   const { token: fcmToken } = useFcmToken();
+  const [isApiLoading, setIsApiLoading] = useState(false)
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
  const isIpad =
@@ -85,7 +86,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
   };
 
  const handleLoginSubmit = async (values: typeof initialFormValues) => {
-    try {
+  
+   if(isApiLoading){
+      return;
+    }
+    setIsApiLoading(true)
+  try {
       const companyValidation = await validateCompanyCode(() =>
         DevERPService.validateCompanyCode(values.company_code),
       );
@@ -136,6 +142,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
           type: 'error',
         });
       console.log("error --------------------- ", e)
+    }  finally {
+      setIsApiLoading(false)
     }
   };
   
@@ -224,6 +232,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
                     ? '#aaa'
                     : ERP_COLOR_CODE.ERP_COLOR
                 }
+                 isApiLoading={isApiLoading}
                 disabled={isLoading || validationLoading || erpLoginLoading}
                 style={[styles.loginButton, {
                     backgroundColor: ERP_COLOR_CODE.ERP_APP_COLOR,
