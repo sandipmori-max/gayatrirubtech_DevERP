@@ -189,10 +189,10 @@ const RootNavigator = () => {
       DevERPService.setAppId(appid || "");
       DevERPService.setDevice(name);
       const db = await getDBConnection();
-      const activeAccount = await getActiveAccount(db);
-      if (activeAccount) {
+       const activeAccount = await getActiveAccount(db);
+       if(activeAccount){
         DevERPService.setToken(activeAccount.user.token);
-      }
+       }
       try {
         const state = await NetInfo.fetch();
         if (!state.isConnected) {
@@ -281,26 +281,58 @@ const RootNavigator = () => {
     return () => sub.remove();
   }, [isAuthenticated, reLoading, attendanceDone]);
 
+useEffect(() => {
+  if (!isAuthenticated) return;
 
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    locationServiceIntervalRef.current = setInterval(() => {
-      if (attendanceDone) {
+  const checkAttendance = async () => {
+    if (!attendanceDone) {
+      dispatch(updateAttendanceState(false));
+      return;
+    }
+
+    try {
+      const res = await dispatch(getLastPunchInThunk()).unwrap();
+
+      if (res?.success === 1 || res?.success === "1") {
         dispatch(updateAttendanceState(true));
+
+        await checkLocation();
         checkLocationServiceOnly();
       } else {
         dispatch(updateAttendanceState(false));
-      }
-    }, 1000);
 
-    return () => {
-      // Cleanup on logout / unmount
-      if (locationServiceIntervalRef.current) {
-        clearInterval(locationServiceIntervalRef.current);
-        locationServiceIntervalRef.current = null;
+        setAlertVisible(false);
+        setOpenSettings(false);
+        setBackgroundDeniedModal(false);
+
+        // User actually punched out
+        NativeModules.LocationModule.clearUserTokens?.();
+        NativeModules.LocationModule.stopService();
       }
-    };
-  }, [isAuthenticated, reLoading, attendanceDone]);
+    } catch (error) {
+      // Network/API error:
+      // DON'T stop location service
+      console.log("Punch status error", error);
+
+      checkLocationServiceOnly();
+    }
+  };
+
+  // Initial check immediately
+  checkAttendance();
+
+  // Check every 1 minute
+  locationServiceIntervalRef.current = setInterval(() => {
+    checkAttendance();
+  }, 60 * 1000);
+
+  return () => {
+    if (locationServiceIntervalRef.current) {
+      clearInterval(locationServiceIntervalRef.current);
+      locationServiceIntervalRef.current = null;
+    }
+  };
+}, [isAuthenticated, reLoading, attendanceDone]);
 
   // ------------------------- Language -------------------------
   useEffect(() => {
@@ -384,7 +416,7 @@ const RootNavigator = () => {
     }
   };
 
-  // ------------------------- Focus -------------------------
+ // ------------------------- Focus -------------------------
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -425,7 +457,6 @@ const RootNavigator = () => {
     return () => clearInterval(interval);
 
   }, [isAuthenticated, appColorCode, attendanceDone, reLoading]);
-
   // ------------------------- Render -------------------------
   if (isLoading || forceLoader) return <FullViewLoader />;
 

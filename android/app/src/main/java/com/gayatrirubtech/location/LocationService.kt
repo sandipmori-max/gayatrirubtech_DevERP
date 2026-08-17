@@ -1,8 +1,5 @@
 package com.gayatrirubtech.location
 
-
-
-
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -208,6 +205,7 @@ private fun startLocationForeground() {
                 fusedLocationClient.removeLocationUpdates(locationCallback)
                 sendDisabledToApi()
                 notifyLocationDisabled()
+                stopSelf()
             }
         }
     }
@@ -258,9 +256,9 @@ private fun startLocationForeground() {
 
         val request = LocationRequest.Builder(
             Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-            15_000
+            60_000L
         )
-            .setMinUpdateDistanceMeters(20f)
+            .setMinUpdateDistanceMeters(50f)
             .build()
 
         locationCallback = object : LocationCallback() {
@@ -380,4 +378,3 @@ private fun startLocationForeground() {
         }
     }
 }
-
