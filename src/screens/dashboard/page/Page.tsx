@@ -601,7 +601,7 @@ const PageScreen = ({ isFromForceLeave, pageUrl }: any) => {
               }}
             />
           )}
-          {!isFromForceLeave && !user?.company_code?.toLowerCase()?.includes("oeuvre01") && controls.length > 0 && (
+          {!isFromForceLeave && !user?.company_code?.toLowerCase()?.includes("gayatrirubtech") && controls.length > 0 && (
             <ERPIcon
               name="save-as"
               isLoading={actionSaveLoader || tapLoader}
@@ -1567,7 +1567,7 @@ const PageScreen = ({ isFromForceLeave, pageUrl }: any) => {
               )}
 
               {
-                (user?.company_code?.toLowerCase()?.includes("oeuvre01") || isFromForceLeave) && <TouchableOpacity
+                (user?.company_code?.toLowerCase()?.includes("gayatrirubtech") || isFromForceLeave) && <TouchableOpacity
                   style={{
                     height: 46,
                     width: '100%',

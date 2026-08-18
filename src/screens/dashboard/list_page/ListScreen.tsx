@@ -63,8 +63,7 @@ import TableView from "./components/TableView";
 import GroupFilterModal from "./components/GroupFilterModal";
 import SortingFilterModal from "./components/SortingFilterModal";
 import DeviceInfo from "react-native-device-info";
-import { ABHA_ICON } from "../../../assets";
-import { useBaseLink } from "../../../hooks/useBaseLink";
+ import { useBaseLink } from "../../../hooks/useBaseLink";
 
 const ListScreen = () => {
   const route = useRoute<RouteProp<ListRouteParams, "List">>();
@@ -353,7 +352,7 @@ const ListScreen = () => {
               isLoading={actionLoaders}
             />
           )}
-          {/* {
+          {
              <ERPIcon
               name={isTableView ? 'list' : 'apps'}
               onPress={() => {
@@ -361,7 +360,7 @@ const ListScreen = () => {
                 setIsTableView(!isTableView);
               }}
             />
-          }  */}
+          } 
           {
             isTableView && <ERPIcon
               name={'G1'}

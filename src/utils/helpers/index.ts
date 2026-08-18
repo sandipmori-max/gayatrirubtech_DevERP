@@ -564,7 +564,6 @@ export const getWorkedHours2 = (punchIn: string, punchOut: string) => {
 
   return `${hours - 1}:${mins.toString().padStart(2, "0")} hr`;
 };
-
 export const clearAllTempFiles = async () => {
   try {
     const tempDir = RNFS.TemporaryDirectoryPath;
@@ -581,6 +580,7 @@ export const clearAllTempFiles = async () => {
     // ignore temp cleanup failure
   }
 };
+
 export const getShadowProps = (
   offset: number = 2,
   radius: number = 8,

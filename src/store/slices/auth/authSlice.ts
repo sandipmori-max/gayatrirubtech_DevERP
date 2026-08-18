@@ -178,8 +178,8 @@ const authSlice = createSlice({
       .addCase(checkAuthStateThunk.rejected, (state, action) => {
         console.log("rejected rejected rejected rejected rejected rejected ++++++++++")
         state.isLoading = false;
-        state.user = null;
-        state.isAuthenticated = false;
+        // state.user = null;
+        // state.isAuthenticated = false;
         state.error = action?.payload as string;
       })
 
@@ -206,8 +206,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.user = null;
-        state.isAuthenticated = false;
+        // state.user = null;
+        // state.isAuthenticated = false;
         state.error = action.payload as string;
       })
       .addCase(switchAccountThunk.pending, state => {
@@ -304,17 +304,17 @@ const authSlice = createSlice({
 
           console.log("menus", menus)
 
-         state.menu = menus.map((menu: any, index: number) => ({
+             state.menu = menus.map((menu: any, index: number) => ({
             id: `menu_${index}`,
-            name: `${menu?.Name}` || '',
-            url: `${menu?.Link}` || '',
-            icon: `${menu?.Image}` || '',
-            children: `${menu?.Datas}` || [],
-            module:  `${menu?.Module}` || '',
-            materialIcon: `${menu?.MaterialIcon}` || '',
-            moduleMaterialIcon: `${menu?.ModuleMaterialIcon}` || '',
-            title: `${menu?.Title}` || '',
-            isReport: `${menu?.IsReport}`,
+            name: menu?.Name ? `${menu?.Name}` : '',
+            url:  menu?.Link ? `${menu?.Link}` : '',
+            icon: menu?.Image ?  `${menu?.Image}` : '',
+            children: menu?.Datas ? `${menu?.Datas}` : [],
+            module:  menu?.Module ? `${menu?.Module}` : '',
+            materialIcon: menu?.MaterialIcon ? `${menu?.MaterialIcon}` : '',
+            moduleMaterialIcon: menu?.ModuleMaterialIcon ? `${menu?.ModuleMaterialIcon}` : '',
+            title: menu?.Title ? `${menu?.Title}` : '',
+            isReport: menu?.IsReport ? `${menu?.IsReport}` : "",
           }));
           state.error = null;
           // state.isMenuLoading = false;
