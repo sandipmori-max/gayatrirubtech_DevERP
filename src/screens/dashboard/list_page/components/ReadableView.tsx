@@ -105,6 +105,7 @@ const ReadableView = ({
   loadMore,
   isLoadingMore,
   parsedConfig,
+  handleAbhaClicked
 }: any) => {
   const { t } = useTranslations();
   const navigation = useNavigation();
@@ -113,7 +114,7 @@ const ReadableView = ({
   const theme = useAppSelector((state) => state?.theme?.mode);
   console.log(
     "Rendering+++++++++++++ TableView with data length:",
-    loadingListId,
+    parsedConfig,
     filteredData,
   );
   const isIpad =
@@ -185,11 +186,14 @@ const ReadableView = ({
     const status = item?.status;
     const date = item?.date;
     const remarks = item?.remarks;
+    
     const address = item?.address;
+    console.log("address", address)
     const amount = item?.amount;
     const btnKeys = Object.keys(item).filter((key) => key.startsWith("btn_"));
-    const baseUrl =
-      item?.image;
+    const baseUrl = Platform.OS === "android"
+                                        ? item.image?.replace("https://", "http://")
+                                        : item.image + `?t=${Date.now()}`
     const authUser = item?.authuser;
     const qty = item?.qty;
 
@@ -255,7 +259,7 @@ const ReadableView = ({
     const card = (
       <>
         <View
-          style={{
+          style={[{
             backgroundColor:
               theme === "dark"
                 ? "black"
@@ -275,7 +279,12 @@ const ReadableView = ({
                 : ERP_COLOR_CODE.ERP_999,
             width: isIpad ? isLandscape ? '32%' : '48%' : isLandscape ? "48%" : "96%",
             overflow: "hidden",
-          }}
+          },
+          item?.color && 
+          {
+            backgroundColor : item?.color
+          }
+        ]}
         >
           {/* main touchable */}
           <TouchableOpacity
@@ -476,7 +485,7 @@ const ReadableView = ({
                   }}
                 >
                   <View style={{ width: amount ? "70%" : "100%" }}>
-                    {!!remarks && <RemarksView remarks={remarks} />}
+                    {!!remarks && <RemarksView color={item?.color} remarks={remarks} />}
                   </View>
                   <View style={{ width: "30%", alignItems: "flex-end" }}>
                     {!qty && !!amount && (
@@ -520,7 +529,7 @@ const ReadableView = ({
                         color: theme === "dark" ? "white" : "black",
                       }}
                     >
-                      {address.replace(/\\n/g, "\n")}
+                      {typeof address === 'string' ?  address?.replace(/\\n/g, "\n") :  address}
                     </Text>
                   </View>
                 )}
@@ -715,8 +724,13 @@ const ReadableView = ({
         keyExtractor={(_, index) => index.toString()}
         data={listData}
         keyboardShouldPersistTaps="handled"
-        renderItem={({ item, index }) => (
+        renderItem={({ item, index }) => (<>
+
           <RenderCard item={item} index={index} />
+          
+        </>
+
+          // 
         )}
         key={isIpad ? isLandscape ? "ipad-list" : "ipad-landscape" : isLandscape ? "landscape" : "portrait"}
         numColumns={isIpad ? isLandscape ? 3 : 2 : isLandscape ? 2 : 1}

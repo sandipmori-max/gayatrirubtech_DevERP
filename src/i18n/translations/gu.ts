@@ -1,6 +1,6 @@
 export default {
   common: {
-    appName: 'DevERP',
+    appName: 'Gayatri rub tech',
     loading: 'પ્રક્રિયા થઈ રહ્યું છે...',
     error: 'કોઈ ભૂલ થઈ છે',
     success: 'સફળ!',
@@ -31,7 +31,7 @@ export default {
     signUp: 'નોંધણી કરો',
     signIn: 'પ્રવેશ કરો',
     signingIn: 'પ્રવેશ થઈ રહ્યો છે...',
-    welcomeDevERP: 'DevERP માં સ્વાગત છે',
+    welcomeDevERP: 'Gayatri rub tech માં સ્વાગત છે',
     addAccount: 'ખાતું ઉમેરો',
     signInToAddAccount: 'બીજું ખાતું ઉમેરવા માટે પ્રવેશ કરો',
     signInToAccount: 'તમારા ખાતુંમાં પ્રવેશ કરો',
