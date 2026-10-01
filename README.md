@@ -3,6 +3,7 @@
 // Multiple build creation with different Name + icon + package name
 
 // --- android build ----
+rm -rf node_modules/.cache
 // ./gradlew --stop
 // ./gradlew clean
 // ./gradlew generateCodegenArtifactsFromSchema 
@@ -7109,3 +7110,699 @@ data
       : ["#fff", "#fff", "#fff"];
 
  ONLY - Android 
+
+
+ CREATE Procedure dbo.USP_PatientABHAProfile_IN(
+@PatientABHAID numeric out,
+@ABHANumber nvarchar(32),
+@ABHAName nvarchar(128),
+@Date nvarchar(32),
+@BranchID int,
+@GUID nvarchar(128),
+@AadharNumber nvarchar(32),
+@FirstName nvarchar(128),
+@MiddleName nvarchar(128),
+@LastName nvarchar(128),
+@FullName nvarchar(256),
+@PatientID numeric(18,2),
+@DOB nvarchar(32),
+@YearOfBirth int,
+@MonthOfBirth int,
+@DayOfBirth int,
+@Gender nvarchar(16),
+@MobileNo nvarchar(32),
+@CommunicationMobile nvarchar(128),
+@CommunicationEmail nvarchar(256),
+@Address nvarchar(4000),
+@StateName nvarchar(128),
+@StateCode nvarchar(32),
+@DistrictName nvarchar(128),
+@DistrictCode nvarchar(32),
+@SubDistrictName nvarchar(128),
+@PinCode nvarchar(16),
+@PreferredABHAAddress nvarchar(200),
+@LocalizedName nvarchar(300),
+@LocalizedStateName nvarchar(100),
+@LocalizedDistrictName nvarchar(100),
+@LocalizedVillageName nvarchar(100),
+@LocalizedTownName nvarchar(100),
+@LocalizedGender nvarchar(50),
+@LocalizedLabels nvarchar(4000),
+@PHRAddress nvarchar(4000),
+@Tags nvarchar(4000),
+@IsKYCVerified bit,
+@IsNew bit,
+@ABHAType nvarchar(64),
+@ABHAStatus nvarchar(64),
+@AuthMethods nvarchar(4000),
+@VerificationType nvarchar(100),
+@VerificationStatus nvarchar(100),
+@ProfileStatus nvarchar(16),
+@LastSyncDate nvarchar(32),
+@CUID numeric(18,2),
+@AuthBy numeric(18,2),
+@Status nvarchar(16),
+@CDT nvarchar(32),
+@MUID numeric(18,2),
+@MDT nvarchar(32),
+@Photo nvarchar(4000),
+@ProfilePhoto nvarchar(4000),
+@KYCPhoto nvarchar(4000),
+@ABHACard nvarchar(4000),
+@QRCode nvarchar(4000),
+@RETURN_VALUE int Output) AS
+Declare @Error int
+SET @ABHANumber = nullif(@ABHANumber,'')
+SET @ABHAName = nullif(@ABHAName,'')
+SET @Date = nullif(@Date,'')
+SET @GUID = nullif(@GUID,'')
+SET @AadharNumber = nullif(@AadharNumber,'')
+SET @FirstName = nullif(@FirstName,'')
+SET @MiddleName = nullif(@MiddleName,'')
+SET @LastName = nullif(@LastName,'')
+SET @FullName = nullif(@FullName,'')
+SET @DOB = nullif(@DOB,'')
+SET @Gender = nullif(@Gender,'')
+SET @MobileNo = nullif(@MobileNo,'')
+SET @CommunicationMobile = nullif(@CommunicationMobile,'')
+SET @CommunicationEmail = nullif(@CommunicationEmail,'')
+SET @Address = nullif(@Address,'')
+SET @StateName = nullif(@StateName,'')
+SET @StateCode = nullif(@StateCode,'')
+SET @DistrictName = nullif(@DistrictName,'')
+SET @DistrictCode = nullif(@DistrictCode,'')
+SET @SubDistrictName = nullif(@SubDistrictName,'')
+SET @PinCode = nullif(@PinCode,'')
+SET @PreferredABHAAddress = nullif(@PreferredABHAAddress,'')
+SET @LocalizedName = nullif(@LocalizedName,'')
+SET @LocalizedStateName = nullif(@LocalizedStateName,'')
+SET @LocalizedDistrictName = nullif(@LocalizedDistrictName,'')
+SET @LocalizedVillageName = nullif(@LocalizedVillageName,'')
+SET @LocalizedTownName = nullif(@LocalizedTownName,'')
+SET @LocalizedGender = nullif(@LocalizedGender,'')
+SET @LocalizedLabels = nullif(@LocalizedLabels,'')
+SET @PHRAddress = nullif(@PHRAddress,'')
+SET @Tags = nullif(@Tags,'')
+SET @ABHAType = nullif(@ABHAType,'')
+SET @ABHAStatus = nullif(@ABHAStatus,'')
+SET @AuthMethods = nullif(@AuthMethods,'')
+SET @VerificationType = nullif(@VerificationType,'')
+SET @VerificationStatus = nullif(@VerificationStatus,'')
+SET @ProfileStatus = nullif(@ProfileStatus,'')
+SET @LastSyncDate = nullif(@LastSyncDate,'')
+SET @Status = nullif(@Status,'')
+SET @CDT = nullif(@CDT,'')
+SET @MDT = nullif(@MDT,'')
+SET @Photo = nullif(@Photo,'')
+SET @ProfilePhoto = nullif(@ProfilePhoto,'')
+SET @KYCPhoto = nullif(@KYCPhoto,'')
+SET @ABHACard = nullif(@ABHACard,'')
+SET @QRCode = nullif(@QRCode,'')
+
+if isnull(@GUID,'') = '' Set @GUID = NEWID();
+
+DECLARE @OldID numeric
+SELECT @OldID = isnull(Max(PatientABHAID),0) FROM PatientABHAProfile WHERE GUID = @GUID
+
+IF @OldID = 0
+BEGIN
+DECLARE @Match_AadharNumber int=0, @Match_MobileNo int=0, @Match_PreferredABHAAddress int = 0,
+@P_ABHAID NUMERIC(18,0) = 0, @Match_ABHANumber int = 0
+
+SELECT @P_ABHAID = PatientABHAID,
+@Match_ABHANumber = CASE WHEN @ABHANumber = ABHANumber THEN 1 ELSE 0 END,
+@Match_AadharNumber = CASE WHEN @AadharNumber = AadharNumber THEN 1 ELSE 0 END,
+@Match_MobileNo = CASE WHEN @MobileNo = AadharNumber THEN 1 ELSE 0 END,
+@Match_PreferredABHAAddress = CASE WHEN @PreferredABHAAddress = AadharNumber THEN 1 ELSE 0 END
+FROM PatientABHAProfile 
+WHERE (
+   TRIM(ABHANumber) = TRIM(@ABHANumber) 
+OR TRIM(AadharNumber) = TRIM(@AadharNumber)
+OR TRIM(MobileNo) = TRIM(@MobileNo)
+OR TRIM(PreferredABHAAddress) = TRIM(@PreferredABHAAddress)
+)
+
+--@Match_ABHANumber = 1 and @Match_AadharNumber = 1 and @Match_MobileNo = 1 and @Match_PreferredABHAAddress = 1 and 
+IF(@P_ABHAID > 0 AND @Match_ABHANumber = 1 and @Match_AadharNumber = 1 and @Match_MobileNo = 1 and @Match_PreferredABHAAddress = 1)
+	BEGIN
+		UPDATE PatientABHAProfile set 
+		ABHANumber=@ABHANumber,ABHAName=@ABHAName,Date=convert(datetime, @Date),BranchID=@BranchID,GUID=@GUID,AadharNumber=@AadharNumber,
+		FirstName=@FirstName,MiddleName=@MiddleName,LastName=@LastName,FullName=@FullName,PatientID=@PatientID,DOB=convert(datetime, @DOB),
+		YearOfBirth=@YearOfBirth,MonthOfBirth=@MonthOfBirth,DayOfBirth=@DayOfBirth,Gender=@Gender,MobileNo=@MobileNo,
+		CommunicationMobile=@CommunicationMobile,CommunicationEmail=@CommunicationEmail,Address=@Address,StateName=@StateName,
+		StateCode=@StateCode,DistrictName=@DistrictName,DistrictCode=@DistrictCode,SubDistrictName=@SubDistrictName,PinCode=@PinCode,
+		PreferredABHAAddress=@PreferredABHAAddress,LocalizedName=@LocalizedName,LocalizedStateName=@LocalizedStateName,
+		LocalizedDistrictName=@LocalizedDistrictName,LocalizedVillageName=@LocalizedVillageName,LocalizedTownName=@LocalizedTownName,
+		LocalizedGender=@LocalizedGender,LocalizedLabels=@LocalizedLabels,PHRAddress=@PHRAddress,Tags=@Tags,IsKYCVerified=@IsKYCVerified,
+		IsNew=@IsNew,ABHAType=@ABHAType,ABHAStatus=@ABHAStatus,AuthMethods=@AuthMethods,VerificationType=@VerificationType,
+		VerificationStatus=@VerificationStatus,ProfileStatus=@ProfileStatus,LastSyncDate=convert(datetime, @LastSyncDate),
+		AuthBy=@AuthBy,Status=@Status,Photo=@Photo,ProfilePhoto=@ProfilePhoto,KYCPhoto=@KYCPhoto,ABHACard=@ABHACard,
+		QRCode=@QRCode,MUID=@MUID,MDT=getdate() 
+		WHERE PatientABHAID=@P_ABHAID
+	END
+/*
+	IF ((SELECT COUNT(PatientABHAID) FROM PatientABHAProfile WHERE TRIM(AadharNumber) = TRIM(@AadharNumber)) > 0)
+		BEGIN
+    		RAISERROR('Aadhar Number already exists.',16,1);
+		END
+	ELSE IF ((SELECT COUNT(PatientABHAID) FROM PatientABHAProfile WHERE TRIM(MobileNo) = TRIM(@MobileNo)) > 0)
+		BEGIN
+    		RAISERROR('Mobile already exists.',16,1);
+		END
+	ELSE IF ((SELECT COUNT(PatientABHAID) FROM PatientABHAProfile WHERE TRIM(PreferredABHAAddress) = TRIM(@PreferredABHAAddress)) > 0)
+		BEGIN
+    		RAISERROR('Preferred ABHA Address already exists.',16,1);
+		END
+*/		
+	ELSE
+		BEGIN
+			
+Declare @SrNo numeric,@SrNo2 numeric
+SELECT @SrNo = max(SrNo), @SrNo2 = max(SrNo2) From BranchSrNo 
+SELECT @PatientABHAID = isnull(max(PatientABHAID),@SrNo) + 1 FROM PatientABHAProfile WHERE PatientABHAID >= @SrNo and PatientABHAID <= @SrNo2  
+
+INSERT INTO PatientABHAProfile(PatientABHAID,ABHANumber,ABHAName,Date,BranchID,GUID,AadharNumber,FirstName,MiddleName,LastName,FullName,PatientID,DOB,YearOfBirth,MonthOfBirth,DayOfBirth,Gender,MobileNo,CommunicationMobile,CommunicationEmail,Address,StateName,StateCode,DistrictName,DistrictCode,SubDistrictName,PinCode,PreferredABHAAddress,LocalizedName,LocalizedStateName,LocalizedDistrictName,LocalizedVillageName,LocalizedTownName,LocalizedGender,LocalizedLabels,PHRAddress,Tags,IsKYCVerified,IsNew,ABHAType,ABHAStatus,AuthMethods,VerificationType,VerificationStatus,ProfileStatus,LastSyncDate,AuthBy,Status,Photo,ProfilePhoto,KYCPhoto,ABHACard,QRCode,CUID,CDT)
+VALUES(@PatientABHAID,@ABHANumber,@ABHAName,convert(datetime, @Date),@BranchID,@GUID,@AadharNumber,@FirstName,@MiddleName,@LastName,@FullName,@PatientID,convert(datetime, @DOB),@YearOfBirth,@MonthOfBirth,@DayOfBirth,@Gender,@MobileNo,@CommunicationMobile,@CommunicationEmail,@Address,@StateName,@StateCode,@DistrictName,@DistrictCode,@SubDistrictName,@PinCode,@PreferredABHAAddress,@LocalizedName,@LocalizedStateName,@LocalizedDistrictName,@LocalizedVillageName,@LocalizedTownName,@LocalizedGender,@LocalizedLabels,@PHRAddress,@Tags,@IsKYCVerified,@IsNew,@ABHAType,@ABHAStatus,@AuthMethods,@VerificationType,@VerificationStatus,@ProfileStatus,convert(datetime, @LastSyncDate),@AuthBy,@Status,@Photo,@ProfilePhoto,@KYCPhoto,@ABHACard,@QRCode,@CUID,getdate())
+
+SELECT @PatientABHAID PatientABHAID, @RETURN_VALUE
+END
+END
+
+
+////
+
+CREATE   PROCEDURE dbo.USP_PatientABHAProfile_IN
+(
+    @PatientABHAID numeric OUT,
+    @ABHANumber nvarchar(32),
+    @ABHAName nvarchar(128),
+    @Date nvarchar(32),
+    @BranchID int,
+    @GUID nvarchar(128),
+    @AadharNumber nvarchar(32),
+    @FirstName nvarchar(128),
+    @MiddleName nvarchar(128),
+    @LastName nvarchar(128),
+    @FullName nvarchar(256),
+    @PatientID numeric(18,2),
+    @DOB nvarchar(32),
+    @YearOfBirth int,
+    @MonthOfBirth int,
+    @DayOfBirth int,
+    @Gender nvarchar(16),
+    @MobileNo nvarchar(32),
+    @CommunicationMobile nvarchar(128),
+    @CommunicationEmail nvarchar(256),
+    @Address nvarchar(4000),
+    @StateName nvarchar(128),
+    @StateCode nvarchar(32),
+    @DistrictName nvarchar(128),
+    @DistrictCode nvarchar(32),
+    @SubDistrictName nvarchar(128),
+    @PinCode nvarchar(16),
+    @PreferredABHAAddress nvarchar(200),
+    @LocalizedName nvarchar(300),
+    @LocalizedStateName nvarchar(100),
+    @LocalizedDistrictName nvarchar(100),
+    @LocalizedVillageName nvarchar(100),
+    @LocalizedTownName nvarchar(100),
+    @LocalizedGender nvarchar(50),
+    @LocalizedLabels nvarchar(4000),
+    @PHRAddress nvarchar(4000),
+    @Tags nvarchar(4000),
+    @IsKYCVerified bit,
+    @IsNew bit,
+    @ABHAType nvarchar(64),
+    @ABHAStatus nvarchar(64),
+    @AuthMethods nvarchar(4000),
+    @VerificationType nvarchar(100),
+    @VerificationStatus nvarchar(100),
+    @ProfileStatus nvarchar(16),
+    @LastSyncDate nvarchar(32),
+    @CUID numeric(18,2),
+    @AuthBy numeric(18,2),
+    @Status nvarchar(16),
+    @CDT nvarchar(32),
+    @MUID numeric(18,2),
+    @MDT nvarchar(32),
+    @Photo nvarchar(4000),
+    @ProfilePhoto nvarchar(4000),
+    @KYCPhoto nvarchar(4000),
+    @ABHACard nvarchar(4000),
+    @QRCode nvarchar(4000),
+    @RETURN_VALUE int OUTPUT
+)
+AS
+BEGIN
+
+    SET NOCOUNT ON;
+
+    DECLARE @Error int;
+
+    /* ============================================================
+       EMPTY STRING -> NULL
+       ============================================================ */
+
+    SET @ABHANumber = NULLIF(@ABHANumber, '');
+    SET @ABHAName = NULLIF(@ABHAName, '');
+    SET @Date = NULLIF(@Date, '');
+    SET @GUID = NULLIF(@GUID, '');
+    SET @AadharNumber = NULLIF(@AadharNumber, '');
+    SET @FirstName = NULLIF(@FirstName, '');
+    SET @MiddleName = NULLIF(@MiddleName, '');
+    SET @LastName = NULLIF(@LastName, '');
+    SET @FullName = NULLIF(@FullName, '');
+    SET @DOB = NULLIF(@DOB, '');
+    SET @Gender = NULLIF(@Gender, '');
+    SET @MobileNo = NULLIF(@MobileNo, '');
+    SET @CommunicationMobile = NULLIF(@CommunicationMobile, '');
+    SET @CommunicationEmail = NULLIF(@CommunicationEmail, '');
+    SET @Address = NULLIF(@Address, '');
+    SET @StateName = NULLIF(@StateName, '');
+    SET @StateCode = NULLIF(@StateCode, '');
+    SET @DistrictName = NULLIF(@DistrictName, '');
+    SET @DistrictCode = NULLIF(@DistrictCode, '');
+    SET @SubDistrictName = NULLIF(@SubDistrictName, '');
+    SET @PinCode = NULLIF(@PinCode, '');
+    SET @PreferredABHAAddress = NULLIF(@PreferredABHAAddress, '');
+    SET @LocalizedName = NULLIF(@LocalizedName, '');
+    SET @LocalizedStateName = NULLIF(@LocalizedStateName, '');
+    SET @LocalizedDistrictName = NULLIF(@LocalizedDistrictName, '');
+    SET @LocalizedVillageName = NULLIF(@LocalizedVillageName, '');
+    SET @LocalizedTownName = NULLIF(@LocalizedTownName, '');
+    SET @LocalizedGender = NULLIF(@LocalizedGender, '');
+    SET @LocalizedLabels = NULLIF(@LocalizedLabels, '');
+    SET @PHRAddress = NULLIF(@PHRAddress, '');
+    SET @Tags = NULLIF(@Tags, '');
+    SET @ABHAType = NULLIF(@ABHAType, '');
+    SET @ABHAStatus = NULLIF(@ABHAStatus, '');
+    SET @AuthMethods = NULLIF(@AuthMethods, '');
+    SET @VerificationType = NULLIF(@VerificationType, '');
+    SET @VerificationStatus = NULLIF(@VerificationStatus, '');
+    SET @ProfileStatus = NULLIF(@ProfileStatus, '');
+    SET @LastSyncDate = NULLIF(@LastSyncDate, '');
+    SET @Status = NULLIF(@Status, '');
+    SET @CDT = NULLIF(@CDT, '');
+    SET @MDT = NULLIF(@MDT, '');
+    SET @Photo = NULLIF(@Photo, '');
+    SET @ProfilePhoto = NULLIF(@ProfilePhoto, '');
+    SET @KYCPhoto = NULLIF(@KYCPhoto, '');
+    SET @ABHACard = NULLIF(@ABHACard, '');
+    SET @QRCode = NULLIF(@QRCode, '');
+
+
+    /* ============================================================
+       GENERATE GUID IF EMPTY
+       ============================================================ */
+
+    IF ISNULL(@GUID, '') = ''
+    BEGIN
+        SET @GUID = NEWID();
+    END;
+
+
+    /* ============================================================
+       FIND EXISTING RECORD
+
+       UPDATE ONLY WHEN ALL 5 VALUES MATCH:
+
+       1. ABHANumber
+       2. ABHAName
+       3. AadharNumber
+       4. PreferredABHAAddress
+       5. MobileNo
+       ============================================================ */
+
+    DECLARE @P_ABHAID NUMERIC(18,0) = 0;
+
+
+    SELECT TOP 1
+        @P_ABHAID = PatientABHAID
+    FROM PatientABHAProfile
+    WHERE
+        ISNULL(LTRIM(RTRIM(ABHANumber)), '') =
+        ISNULL(LTRIM(RTRIM(@ABHANumber)), '')
+
+        AND
+
+        ISNULL(LTRIM(RTRIM(ABHAName)), '') =
+        ISNULL(LTRIM(RTRIM(@ABHAName)), '')
+
+        AND
+
+        ISNULL(LTRIM(RTRIM(AadharNumber)), '') =
+        ISNULL(LTRIM(RTRIM(@AadharNumber)), '')
+
+        AND
+
+        ISNULL(LTRIM(RTRIM(PreferredABHAAddress)), '') =
+        ISNULL(LTRIM(RTRIM(@PreferredABHAAddress)), '')
+
+        AND
+
+        ISNULL(LTRIM(RTRIM(MobileNo)), '') =
+        ISNULL(LTRIM(RTRIM(@MobileNo)), '');
+
+
+    /* ============================================================
+       EXISTING RECORD FOUND
+       ============================================================ */
+
+    IF ISNULL(@P_ABHAID, 0) > 0
+    BEGIN
+
+        UPDATE PatientABHAProfile
+        SET
+
+            ABHANumber = @ABHANumber,
+            ABHAName = @ABHAName,
+            Date = CONVERT(datetime, @Date),
+            BranchID = @BranchID,
+            GUID = @GUID,
+            AadharNumber = @AadharNumber,
+
+            FirstName = @FirstName,
+            MiddleName = @MiddleName,
+            LastName = @LastName,
+            FullName = @FullName,
+
+            PatientID = @PatientID,
+            DOB = CONVERT(datetime, @DOB),
+
+            YearOfBirth = @YearOfBirth,
+            MonthOfBirth = @MonthOfBirth,
+            DayOfBirth = @DayOfBirth,
+
+            Gender = @Gender,
+
+            MobileNo = @MobileNo,
+            CommunicationMobile = @CommunicationMobile,
+            CommunicationEmail = @CommunicationEmail,
+
+            Address = @Address,
+
+            StateName = @StateName,
+            StateCode = @StateCode,
+
+            DistrictName = @DistrictName,
+            DistrictCode = @DistrictCode,
+
+            SubDistrictName = @SubDistrictName,
+
+            PinCode = @PinCode,
+
+            PreferredABHAAddress = @PreferredABHAAddress,
+
+            LocalizedName = @LocalizedName,
+            LocalizedStateName = @LocalizedStateName,
+            LocalizedDistrictName = @LocalizedDistrictName,
+            LocalizedVillageName = @LocalizedVillageName,
+            LocalizedTownName = @LocalizedTownName,
+            LocalizedGender = @LocalizedGender,
+            LocalizedLabels = @LocalizedLabels,
+
+            PHRAddress = @PHRAddress,
+            Tags = @Tags,
+
+            IsKYCVerified = @IsKYCVerified,
+            IsNew = @IsNew,
+
+            ABHAType = @ABHAType,
+            ABHAStatus = @ABHAStatus,
+
+            AuthMethods = @AuthMethods,
+
+            VerificationType = @VerificationType,
+            VerificationStatus = @VerificationStatus,
+
+            ProfileStatus = @ProfileStatus,
+
+            LastSyncDate = CONVERT(datetime, @LastSyncDate),
+
+            CUID = @CUID,
+            AuthBy = @AuthBy,
+
+            Status = @Status,
+
+            MUID = @MUID,
+            MDT = GETDATE(),
+
+            Photo = @Photo,
+            ProfilePhoto = @ProfilePhoto,
+            KYCPhoto = @KYCPhoto,
+            ABHACard = @ABHACard,
+            QRCode = @QRCode
+
+        WHERE PatientABHAID = @P_ABHAID;
+
+
+        SET @Error = @@ERROR;
+
+
+        IF @Error <> 0
+        BEGIN
+
+            SET @RETURN_VALUE = -1;
+
+            SELECT
+                @P_ABHAID AS PatientABHAID,
+                @RETURN_VALUE AS RETURN_VALUE;
+
+            RETURN;
+
+        END;
+
+
+        SET @PatientABHAID = @P_ABHAID;
+
+        SET @RETURN_VALUE = 0;
+
+
+        SELECT
+            @PatientABHAID AS PatientABHAID,
+            @RETURN_VALUE AS RETURN_VALUE;
+
+        RETURN;
+
+    END;
+
+
+    /* ============================================================
+       NO MATCH FOUND
+       -> NEW ENTRY
+       ============================================================ */
+
+    DECLARE @SrNo NUMERIC;
+    DECLARE @SrNo2 NUMERIC;
+
+
+    SELECT
+        @SrNo = MAX(SrNo),
+        @SrNo2 = MAX(SrNo2)
+    FROM BranchSrNo;
+
+
+    SELECT
+        @PatientABHAID =
+            ISNULL(MAX(PatientABHAID), @SrNo) + 1
+    FROM PatientABHAProfile
+    WHERE
+        PatientABHAID >= @SrNo
+        AND PatientABHAID <= @SrNo2;
+
+
+    /* ============================================================
+       INSERT NEW RECORD
+       ============================================================ */
+
+    INSERT INTO PatientABHAProfile
+    (
+        PatientABHAID,
+        ABHANumber,
+        ABHAName,
+        Date,
+        BranchID,
+        GUID,
+        AadharNumber,
+
+        FirstName,
+        MiddleName,
+        LastName,
+        FullName,
+
+        PatientID,
+        DOB,
+
+        YearOfBirth,
+        MonthOfBirth,
+        DayOfBirth,
+
+        Gender,
+
+        MobileNo,
+        CommunicationMobile,
+        CommunicationEmail,
+
+        Address,
+
+        StateName,
+        StateCode,
+
+        DistrictName,
+        DistrictCode,
+
+        SubDistrictName,
+
+        PinCode,
+
+        PreferredABHAAddress,
+
+        LocalizedName,
+        LocalizedStateName,
+        LocalizedDistrictName,
+        LocalizedVillageName,
+        LocalizedTownName,
+        LocalizedGender,
+        LocalizedLabels,
+
+        PHRAddress,
+        Tags,
+
+        IsKYCVerified,
+        IsNew,
+
+        ABHAType,
+        ABHAStatus,
+
+        AuthMethods,
+
+        VerificationType,
+        VerificationStatus,
+
+        ProfileStatus,
+
+        LastSyncDate,
+
+        AuthBy,
+        Status,
+
+        Photo,
+        ProfilePhoto,
+        KYCPhoto,
+        ABHACard,
+        QRCode,
+
+        CUID,
+        CDT
+    )
+    VALUES
+    (
+        @PatientABHAID,
+        @ABHANumber,
+        @ABHAName,
+        CONVERT(datetime, @Date),
+        @BranchID,
+        @GUID,
+        @AadharNumber,
+
+        @FirstName,
+        @MiddleName,
+        @LastName,
+        @FullName,
+
+        @PatientID,
+        CONVERT(datetime, @DOB),
+
+        @YearOfBirth,
+        @MonthOfBirth,
+        @DayOfBirth,
+
+        @Gender,
+
+        @MobileNo,
+        @CommunicationMobile,
+        @CommunicationEmail,
+
+        @Address,
+
+        @StateName,
+        @StateCode,
+
+        @DistrictName,
+        @DistrictCode,
+
+        @SubDistrictName,
+
+        @PinCode,
+
+        @PreferredABHAAddress,
+
+        @LocalizedName,
+        @LocalizedStateName,
+        @LocalizedDistrictName,
+        @LocalizedVillageName,
+        @LocalizedTownName,
+        @LocalizedGender,
+        @LocalizedLabels,
+
+        @PHRAddress,
+        @Tags,
+
+        @IsKYCVerified,
+        @IsNew,
+
+        @ABHAType,
+        @ABHAStatus,
+
+        @AuthMethods,
+
+        @VerificationType,
+        @VerificationStatus,
+
+        @ProfileStatus,
+
+        CONVERT(datetime, @LastSyncDate),
+
+        @AuthBy,
+        @Status,
+
+        @Photo,
+        @ProfilePhoto,
+        @KYCPhoto,
+        @ABHACard,
+        @QRCode,
+
+        @CUID,
+        GETDATE()
+    );
+
+
+    SET @Error = @@ERROR;
+
+
+    IF @Error <> 0
+    BEGIN
+
+        SET @RETURN_VALUE = -1;
+
+        SELECT
+            @PatientABHAID AS PatientABHAID,
+            @RETURN_VALUE AS RETURN_VALUE;
+
+        RETURN;
+
+    END;
+
+
+    /* ============================================================
+       SUCCESS
+       ============================================================ */
+
+    SET @RETURN_VALUE = 0;
+
+
+    SELECT
+        @PatientABHAID AS PatientABHAID,
+        @RETURN_VALUE AS RETURN_VALUE;
+
+END;

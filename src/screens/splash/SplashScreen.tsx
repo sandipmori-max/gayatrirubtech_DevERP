@@ -55,7 +55,7 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
   const start = Date.now();
 
   // ✅ Total splash visible time
-  const TOTAL_SPLASH_TIME = 2200;
+  const TOTAL_SPLASH_TIME = 4200;
 
   Animated.sequence([
     // 🔥 Background animation
@@ -137,16 +137,7 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
     }
   });
 }, []);
-  const gradientColors =
-    theme === "dark"
-      ? ["#000000", "#1a1a1a"]
-      : appColorCode
-      ? [
-          ERP_COLOR_CODE.ERP_APP_COLOR,
-          "#4c669f",
-          "#3b5998",
-        ]
-      : ["#4c669f", "#3b5998", "#192f6a"];
+  const gradientColors =  ["#fff", "#fff", "#fff"];
 
   const rotateInterpolate = logoRotate.interpolate({
     inputRange: [0, 1],
@@ -239,7 +230,7 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
             >
               <Image
                 source={user?.companyLogo || ERP_ICON.APP_LOGO}
-                style={{ height: 90, width: 90 }}
+                style={{ height: 220, width: 220 }}
                 resizeMode="contain"
               />
             </Animated.View>
@@ -251,7 +242,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
                   {
                     opacity: greetingOpacity,
                     transform: [{ translateY: textTranslateY }],
-                    color: "#fff",
                   },
                 ]}
               >
@@ -275,7 +265,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
                 styles.title,
                 {
                   transform: [{ translateY: textTranslateY }],
-                  color: "#fff",
                   textAlign: "center",
                 },
               ]}
@@ -290,7 +279,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
                 styles.subtitle,
                 {
                   opacity: subtitleOpacity,
-                  color: "#ddd",
                   textAlign: "center",
                 },
               ]}
@@ -303,7 +291,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
                 styles.poweredBy,
                 {
                   opacity: subtitleOpacity,
-                  color: "#aaa",
                 },
               ]}
             >
@@ -330,8 +317,8 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
             <Image
               source={user?.companyLogo || ERP_ICON.APP_LOGO}
               style={[styles.logo, isIpad && {
-                  height: 90,
-                  width: 90,
+                  height: 220,
+                  width: 220,
               }]}
               resizeMode="contain"
             />
@@ -345,7 +332,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
                 {
                   opacity: greetingOpacity,
                   transform: [{ translateY: textTranslateY }],
-                  color: "#fff",
                   zIndex: 2,
                 },
               ]}
@@ -360,7 +346,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
               styles.title,
               {
                 transform: [{ translateY: textTranslateY }],
-                color: "#fff",
                 textAlign: "center",
                 zIndex: 2,
               },
@@ -377,7 +362,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
               styles.subtitle,
               {
                 opacity: subtitleOpacity,
-                color: "#ddd",
                 textAlign: "center",
                 zIndex: 2,
               },
@@ -392,7 +376,6 @@ const CustomSplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
               styles.poweredBy,
               {
                 opacity: subtitleOpacity,
-                color: "#aaa",
                 zIndex: 2,
               },
             ]}

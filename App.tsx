@@ -203,7 +203,6 @@ useEffect(() => {
           break;
       }
     });
-
   // Background Notification Click
   const unsubscribeBackground =
     onNotificationOpenedAppListener(remoteMessage => {
